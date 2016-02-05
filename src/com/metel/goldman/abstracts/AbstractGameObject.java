@@ -8,6 +8,7 @@ package com.metel.goldman.abstracts;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.interfaces.StaticObject;
+import java.util.Objects;
 import javax.swing.ImageIcon;
 
 /**
@@ -52,9 +53,37 @@ public abstract class AbstractGameObject implements StaticObject {
         this.icon = currentIcon;
     }
     
-    
-
     protected ImageIcon getImageIcon(String path){
         return new ImageIcon(getClass().getResource(path));
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + Objects.hashCode(this.type);
+        hash = 73 * hash + Objects.hashCode(this.coordinate);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractGameObject other = (AbstractGameObject) obj;
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+    
+    
 }
