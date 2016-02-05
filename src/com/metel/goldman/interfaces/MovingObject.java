@@ -3,18 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.interfaces;
+package com.metel.goldman.interfaces;
 
-import com.metel.goldman.objects.game.common.AbstractGameObject;
-import com.metel.goldman.objects.game.enums.MovingDirection;
+import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.enums.MovingDirection;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author Metel
+ * Поведение для всех движущихся объектов
  */
-
-// Поведение для всех движущихся объектов
 
 public interface MovingObject extends StaticObject {
     

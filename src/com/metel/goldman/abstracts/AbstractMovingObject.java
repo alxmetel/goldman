@@ -3,21 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.common;
+package com.metel.goldman.abstracts;
 
-import com.metel.goldman.objects.game.enums.MovingDirection;
-import com.metel.goldman.objects.game.interfaces.MovingObject;
+import com.metel.goldman.enums.GameObjectType;
+import com.metel.goldman.enums.MovingDirection;
+import com.metel.goldman.interfaces.MovingObject;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author Metel
+ * Класс, который отвечает за любой движущийся объект, наследуется от класса
+ * AbstractGameObject с добавлением функций движения
  */
 
-//Класс, который отвечает за любой движущийся объект, наследуется от класса
-//AbstractGAmeObject с добавлением функций движения
-
 public abstract class AbstractMovingObject extends AbstractGameObject implements MovingObject{
+    
     
     private ImageIcon iconLeft;
     private ImageIcon iconUp;

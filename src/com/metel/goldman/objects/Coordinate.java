@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.common;
+package com.metel.goldman.objects;
 
 import java.io.Serializable;
 
 /**
  *
  * @author Metel
+ * Класс работает с координатами объекта. Каждый объект в игре имеет свои координаты
  */
-
-// Класс работает с координатами объекта. Каждый объект в игре имеет свои
-// координаты
 
 public class Coordinate implements Serializable {
 

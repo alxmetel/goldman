@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.enums;
+package com.metel.goldman.enums;
 
 /**
  *
  * @author Metel
+ * Направления, по которым могут двигаться объекты
  */
-
-// Направления, по которым могут двигаться объекты
 
 public enum MovingDirection {
     

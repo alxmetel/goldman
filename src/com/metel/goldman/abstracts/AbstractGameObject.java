@@ -3,19 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.common;
+package com.metel.goldman.abstracts;
 
-import com.metel.goldman.objects.game.enums.GameObjectType;
-import com.metel.goldman.objects.game.interfaces.StaticObject;
+import com.metel.goldman.objects.Coordinate;
+import com.metel.goldman.enums.GameObjectType;
+import com.metel.goldman.interfaces.StaticObject;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author Metel
+ * Класс, который отвечает за любой объект, созданный в игре. Задает все общие
+ * характеристики объектов в игре
  */
-
-// Класс, который отвечает за любой объект, созданный в игре. Задает все общие
-// характеристики объектов в игре
 
 public abstract class AbstractGameObject implements StaticObject {
     

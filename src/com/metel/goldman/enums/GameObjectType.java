@@ -3,16 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.enums;
+package com.metel.goldman.enums;
 
 import java.io.Serializable;
 
 /**
  *
  * @author Metel
+ * Типы объектов, которые участвуют в игре
  */
 
-//Типы объектов, которые участвуют в игре
 
 public enum GameObjectType implements Serializable {
     

@@ -9,6 +9,8 @@ import javax.swing.JFrame;
  *
  * @author Metel
  */
+
+
 public abstract class BaseChildFrame extends JFrame {
 
     public BaseChildFrame() {

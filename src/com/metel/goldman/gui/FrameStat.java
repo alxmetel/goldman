@@ -33,7 +33,7 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableStat = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         jButton1.setText("<< Main Menu");
         jButton1.addActionListener(new java.awt.event.ActionListener() {

@@ -3,18 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.game.interfaces;
+package com.metel.goldman.interfaces;
 
-import com.metel.goldman.objects.game.common.Coordinate;
-import com.metel.goldman.objects.game.enums.GameObjectType;
+import com.metel.goldman.objects.Coordinate;
+import com.metel.goldman.enums.GameObjectType;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author Metel
+ * Поведение для всех статичных объектов
  */
-
-// Поведение для всех статичных объектов
 
 public interface StaticObject {
     
