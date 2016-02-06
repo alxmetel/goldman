@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects;
+package com.metel.goldman.abstracts;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.interfaces.GameMap;
+import com.metel.goldman.objects.Coordinate;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -24,12 +25,52 @@ public abstract class AbstractGameMap implements GameMap, Serializable { //Seria
     private int width;
     private int height;
     private int timeLimit;
-    private boolean isExitExist;
-    private boolean isGoldManExist;
+    private String name;
+    private boolean exitExist;
+    private boolean goldManExist;
     
     private HashMap<Coordinate, AbstractGameObject> gameObjects = new HashMap<>(); //хранит все объекты с доступом по координатам
     private EnumMap<GameObjectType, ArrayList<AbstractGameObject>> typeObjects = new EnumMap<>(GameObjectType.class); //хранит список объектов для каждоготипа
 
+    public void addGameObject(AbstractGameObject gameObject) {
+        
+        ArrayList<AbstractGameObject> tmpList = typeObjects.get(gameObject.getType());
+        
+        if(tmpList == null) {
+            tmpList = new ArrayList();
+        }
+        
+        tmpList.add(gameObject);
+        
+        gameObjects.put(gameObject.getCoordinate(), gameObject);
+        typeObjects.put(gameObject.getType(), tmpList);
+    }
+    
+    public boolean isExitExist() {
+        return exitExist;
+    }
+
+    public void setExitExist(boolean isExitExist) {
+        this.exitExist = isExitExist;
+    }
+    
+    public boolean isGoldManExist() {
+        return goldManExist;
+    }
+
+    public void setGoldManExist(boolean isGoldManExist) {
+        this.goldManExist = isGoldManExist;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    @Override
     public int getWidth() {
         return width;
     }
@@ -38,6 +79,7 @@ public abstract class AbstractGameMap implements GameMap, Serializable { //Seria
         this.width = width;
     }
 
+    @Override
     public int getHeight() {
         return height;
     }
@@ -46,6 +88,7 @@ public abstract class AbstractGameMap implements GameMap, Serializable { //Seria
         this.height = height;
     }
 
+    @Override
     public int getTimeLimit() {
         return timeLimit;
     }
@@ -60,7 +103,7 @@ public abstract class AbstractGameMap implements GameMap, Serializable { //Seria
     }
     
     public boolean isValidMap() {
-        return isGoldManExist && isExitExist; //если есть и входи выход, карта валидна
+        return goldManExist && exitExist; //если есть и входи выход, карта валидна
     }
     
     public ArrayList<AbstractGameObject> getList(GameObjectType type) {

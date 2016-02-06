@@ -14,8 +14,8 @@ public interface GameMap {
     
     int getHeight();
     int getWidth();
-    boolean loadMap();
-    boolean saveMap();
+    boolean loadMap(Object source);
+    boolean saveMap(Object source);
     boolean drawMap();
     int getTimeLimit();
 }

@@ -5,6 +5,8 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.interfaces.GameMap;
+import com.metel.goldman.objects.maps.FSGameMap;
 import java.awt.event.ActionListener;
 
 /**
@@ -16,8 +18,13 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     /**
      * Creates new form FrameGame
      */
+    
+    private GameMap gameMap = new FSGameMap(); // загрузка карты с файловой системы
+    
     public FrameGame() {
         initComponents();
+        
+        gameMap.loadMap("game.map");
     }
 
     /**
