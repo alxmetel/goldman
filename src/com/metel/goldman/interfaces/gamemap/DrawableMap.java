@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.interfaces.gamemap;
 
+import com.metel.goldman.abstracts.AbstractGameMap;
 import java.awt.Component;
 
 /**
@@ -15,6 +16,9 @@ import java.awt.Component;
 public interface DrawableMap {
     
     Component getMap();
+    
+    AbstractGameMap getGameMap();
+    
     boolean drawMap();
     
 }

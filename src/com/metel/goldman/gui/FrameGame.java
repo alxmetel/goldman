@@ -5,6 +5,10 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.abstracts.AbstractMovingObject;
+import com.metel.goldman.enums.GameObjectType;
+import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -249,15 +253,15 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     }//GEN-LAST:event_jbtnSaveActionPerformed
 
     private void jbtnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDownActionPerformed
-        // TODO add your handling code here:
+        moveGoldMan(MovingDirection.DOWN, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnDownActionPerformed
 
     private void jbtnRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnRightActionPerformed
-        // TODO add your handling code here:
+        moveGoldMan(MovingDirection.RIGHT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnRightActionPerformed
 
     private void jbtnLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLeftActionPerformed
-        // TODO add your handling code here:
+        moveGoldMan(MovingDirection.LEFT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnLeftActionPerformed
 
     private void jbtnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExitActionPerformed
@@ -265,7 +269,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     }//GEN-LAST:event_jbtnExitActionPerformed
 
     private void jbtnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnUpActionPerformed
-        // TODO add your handling code here:
+        moveGoldMan(MovingDirection.UP, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnUpActionPerformed
 
     
@@ -294,5 +298,14 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private void moveGoldMan(MovingDirection movingDirection, GameObjectType gameObjectType) {
+        AbstractGameObject gameObject = gameMap.getGameMap().getGameObjects(gameObjectType).get(0);
+        
+        if (gameObject instanceof AbstractMovingObject){// дорогостоящая операция
+            ((AbstractMovingObject)gameObject).move(movingDirection);
+            gameMap.drawMap();
+        }
     }
 }

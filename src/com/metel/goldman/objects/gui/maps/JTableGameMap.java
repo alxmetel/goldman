@@ -82,6 +82,9 @@ public class JTableGameMap implements DrawableMap {
 
     @Override
     public boolean drawMap() {
+        
+        updateObjectsArray();
+        
         try {
             // присваиваем пустоту всем заголовкам столбцов, чтобы у таблицы не было заголовоков, а то некрасиво смотрится
             columnNames = new String[gameMap.getWidth()];
@@ -111,5 +114,10 @@ public class JTableGameMap implements DrawableMap {
     @Override
     public Component getMap() {
         return jTableMap;
+    }
+
+    @Override
+    public AbstractGameMap getGameMap() {
+        return gameMap;
     }
 }

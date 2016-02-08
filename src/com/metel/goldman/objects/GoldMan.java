@@ -51,11 +51,6 @@ public class GoldMan extends AbstractMovingObject {
     }
 
     @Override
-    public void move(MovingDirection direction) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public void getMoveResult(AbstractGameObject objectInNewCoordinate) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
