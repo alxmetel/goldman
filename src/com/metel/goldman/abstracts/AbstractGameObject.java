@@ -20,14 +20,28 @@ import javax.swing.ImageIcon;
 
 public abstract class AbstractGameObject implements StaticObject {
     
-    private GameObjectType type; // все объекты будут иметь тип
-    private Coordinate coordinate; // все объекты будут иметь координаты положения
+    private GameObjectType type;// все объекты будут иметь тип
+    private Coordinate coordinate;// все объекты будут иметь координаты положения
     
-    private ImageIcon icon = getImageIcon("/com/metel/goldman/images/noicon.png"); //изображение по умолчанию
+    private ImageIcon icon = getImageIcon("/com/metel/goldman/images/noicon.png");// изображение по-умолчанию
 
     protected AbstractGameObject() {
     }
 
+    public void setIcon(ImageIcon currentIcon) {
+        this.icon = currentIcon;
+    }
+
+    @Override
+    public ImageIcon getIcon() {
+        return icon;
+    }
+
+    
+    protected ImageIcon getImageIcon(String path){
+        return new ImageIcon(getClass().getResource(path));
+    }
+    
     @Override
     public GameObjectType getType() {
         return type;
@@ -37,6 +51,7 @@ public abstract class AbstractGameObject implements StaticObject {
         this.type = type;
     }
 
+    @Override
     public Coordinate getCoordinate() {
         return coordinate;
     }
@@ -45,31 +60,16 @@ public abstract class AbstractGameObject implements StaticObject {
         this.coordinate = coordinate;
     }
 
-    public ImageIcon getIcon() {
-        return icon;
-    }
-
-    public void setIcon(ImageIcon currentIcon) {
-        this.icon = currentIcon;
-    }
-    
-    protected ImageIcon getImageIcon(String path){
-        return new ImageIcon(getClass().getResource(path));
-    }
-
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 73 * hash + Objects.hashCode(this.type);
-        hash = 73 * hash + Objects.hashCode(this.coordinate);
+        hash = 37 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 37 * hash + Objects.hashCode(this.coordinate);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
         if (obj == null) {
             return false;
         }
@@ -84,6 +84,4 @@ public abstract class AbstractGameObject implements StaticObject {
     public String toString() {
         return super.toString();
     }
-    
-    
 }

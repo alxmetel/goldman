@@ -15,10 +15,9 @@ import java.awt.Component;
  */
 public interface DrawableMap {
     
-    Component getMap();
+    Component getMapComponent();
     
     AbstractGameMap getGameMap();
     
     boolean drawMap();
-    
 }

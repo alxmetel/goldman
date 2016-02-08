@@ -5,35 +5,35 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.abstracts.AbstractGameObject;
-import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  *
  * @author Metel
  */
-public class FrameGame extends BaseChildFrame implements ActionListener {
+public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener {
 
-    private DrawableMap gameMap; //передаем объект карты, которая умеет себя рисовать
+    private DrawableMap gameMap; // передаем объект карты, которая умеет себя рисовать
+
     /**
      * Creates new form FrameGame
      */
-    
     public FrameGame() {
         initComponents();
     }
-    
+
     public void setMap(DrawableMap gameMap) {
         this.gameMap = gameMap;
         gameMap.drawMap();
-        
+
         jPanelMap.removeAll();
-        jPanelMap.add(gameMap.getMap());
+        jPanelMap.add(gameMap.getMapComponent());
     }
 
     /**
@@ -253,15 +253,15 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     }//GEN-LAST:event_jbtnSaveActionPerformed
 
     private void jbtnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDownActionPerformed
-        moveGoldMan(MovingDirection.DOWN, GameObjectType.GOLDMAN);
+        moveObject(MovingDirection.DOWN, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnDownActionPerformed
 
     private void jbtnRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnRightActionPerformed
-        moveGoldMan(MovingDirection.RIGHT, GameObjectType.GOLDMAN);
+        moveObject(MovingDirection.RIGHT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnRightActionPerformed
 
     private void jbtnLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLeftActionPerformed
-        moveGoldMan(MovingDirection.LEFT, GameObjectType.GOLDMAN);
+        moveObject(MovingDirection.LEFT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnLeftActionPerformed
 
     private void jbtnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExitActionPerformed
@@ -269,7 +269,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     }//GEN-LAST:event_jbtnExitActionPerformed
 
     private void jbtnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnUpActionPerformed
-        moveGoldMan(MovingDirection.UP, GameObjectType.GOLDMAN);
+        moveObject(MovingDirection.UP, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnUpActionPerformed
 
     
@@ -300,12 +300,23 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private void moveGoldMan(MovingDirection movingDirection, GameObjectType gameObjectType) {
-        AbstractGameObject gameObject = gameMap.getGameMap().getGameObjects(gameObjectType).get(0);
-        
-        if (gameObject instanceof AbstractMovingObject){// дорогостоящая операция
-            ((AbstractMovingObject)gameObject).move(movingDirection);
-            gameMap.drawMap();
-        }
+    private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
+        gameMap.getGameMap().move(movingDirection, gameObjectType);
+        gameMap.drawMap();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

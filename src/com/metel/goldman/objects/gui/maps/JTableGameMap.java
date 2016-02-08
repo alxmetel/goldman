@@ -9,6 +9,7 @@ import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.LocationType;
+import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.Nothing;
@@ -33,7 +34,7 @@ public class JTableGameMap implements DrawableMap {
     // каждый элемент массива будет обозначаться согласно текстовому представлению объекта как описано в GameObjectType
     private AbstractGameObject[][] mapObjects;
 
-    public JTableGameMap(LocationType type, Object source) {
+    public JTableGameMap(LocationType type, Object source, GameCollection gameCollection) {
         jTableMap.setEnabled(false);
         jTableMap.setSize(new java.awt.Dimension(300, 300));
         jTableMap.setRowHeight(26);
@@ -44,10 +45,8 @@ public class JTableGameMap implements DrawableMap {
         jTableMap.setUpdateSelectionOnSort(false);
         jTableMap.setVerifyInputWhenFocusTarget(false);
         
-        gameMap = MapCreator.getInstance().createMap(type);
+        gameMap = MapCreator.getInstance().createMap(type, gameCollection);
         gameMap.loadMap(source);
-        
-        updateObjectsArray();
     }
     
     private void fillEmptyMap(int width, int height){
@@ -65,7 +64,7 @@ public class JTableGameMap implements DrawableMap {
         fillEmptyMap(gameMap.getWidth(), gameMap.getHeight());
         
         // потом заполнить массив объектами
-        for (AbstractGameObject gameObj : gameMap.getAllGameObjects()) {
+        for (AbstractGameObject gameObj : gameMap.getGameCollection().getAllGameObjects()) {
             if (!gameObj.getType().equals(GameObjectType.NOTHING)) {// пустоты не добавляем, т.к. они уже добавились когда мы вызвали метод fillEmptyMap()
                 int y = gameObj.getCoordinate().getY();
                 int x = gameObj.getCoordinate().getX();
@@ -112,7 +111,7 @@ public class JTableGameMap implements DrawableMap {
     }
 
     @Override
-    public Component getMap() {
+    public Component getMapComponent() {
         return jTableMap;
     }
 

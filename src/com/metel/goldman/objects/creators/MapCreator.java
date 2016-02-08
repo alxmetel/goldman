@@ -7,6 +7,7 @@ package com.metel.goldman.objects.creators;
 
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.enums.LocationType;
+import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.objects.maps.FSGameMap;
 
 /**
@@ -14,7 +15,7 @@ import com.metel.goldman.objects.maps.FSGameMap;
  * @author Metel
  */
 public class MapCreator {
-    
+
     private static MapCreator instance;
 
     public static MapCreator getInstance() {
@@ -23,13 +24,13 @@ public class MapCreator {
         }
         return instance;
     }
-    
-    public AbstractGameMap createMap(LocationType type) {
+
+    public AbstractGameMap createMap(LocationType type, GameCollection collection) {
         AbstractGameMap obj = null;
 
         switch (type) {
             case FS: {
-                obj = new FSGameMap();
+                obj = new FSGameMap(collection);
                 break;
             }
             case DB: {
@@ -39,6 +40,7 @@ public class MapCreator {
             default:
                 throw new IllegalArgumentException("Can't create map type: " + type);
         }
+
         return obj;
     }
 }

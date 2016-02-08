@@ -8,6 +8,7 @@ package com.metel.goldman.objects.maps;
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
+import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.creators.GameObjectCreator;
 import java.io.BufferedReader;
@@ -22,10 +23,17 @@ import java.util.logging.Logger;
  * @author Metel
  */
 public class FSGameMap extends AbstractGameMap {
+    
+    public FSGameMap(){   
+        super();
+    }
+
+    public FSGameMap(GameCollection gameCollection) {
+        super(gameCollection);
+    }
 
     @Override
     public boolean loadMap(Object source) {
-        
         File file = new File(source.toString());
         
         if (!file.exists()) {
@@ -80,7 +88,7 @@ public class FSGameMap extends AbstractGameMap {
 
         AbstractGameObject newObj = GameObjectCreator.getInstance().createObject(type, coordinate); //создаем объект
 
-        addGameObject(newObj); // добавляем созданный объект
+        getGameCollection().addGameObject(newObj);
 
         if (newObj.getType() == GameObjectType.EXIT) {
             setExitExist(true);

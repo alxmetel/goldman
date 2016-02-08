@@ -8,14 +8,17 @@ package com.metel.goldman.interfaces.gamemap;
 /**
  *
  * @author Metel
- * Интерфейс для создания игровой карты
+ * Интерфейс для игровой карты
  */
 public interface GameMap {
-    
-    int getHeight();
-    int getWidth();
-    int getTimeLimit();
-    boolean loadMap(Object source);
-    boolean saveMap(Object source);
 
+    int getHeight();
+
+    int getWidth();
+
+    int getTimeLimit();
+
+    boolean loadMap(Object source);
+
+    boolean saveMap(Object source);
 }

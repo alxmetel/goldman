@@ -16,13 +16,13 @@ import javax.swing.ImageIcon;
  */
 
 public interface StaticObject {
-    
+ 
     // объект должен иметь иконку
     ImageIcon getIcon();
-    
-    //координаты
+
+    // координаты
     Coordinate getCoordinate();
 
-    //тип объекта
-    GameObjectType getType();
+    // тип объекта
+    GameObjectType getType();           
 }

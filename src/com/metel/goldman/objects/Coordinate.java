@@ -68,4 +68,5 @@ public class Coordinate implements Serializable {
     public String toString() {
         return "x=" + x + ", y=" + y;
     }
+    
 }

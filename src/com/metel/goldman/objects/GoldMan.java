@@ -5,7 +5,6 @@
  */
 package com.metel.goldman.objects;
 
-import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
@@ -17,44 +16,47 @@ import com.metel.goldman.enums.MovingDirection;
  */
 
 public class GoldMan extends AbstractMovingObject {
-    
-    private int totalScore = 0; //кол-во очков, собранных игроком
-    private int turnsNumber = 0; //кол-во сделанных ходов
-    
+
+    private int totalScore = 0;// кол-во очков, собранных игроком
+    private int turnsNumber = 0;// кол-во сделанных ходов
+
     public GoldMan(Coordinate coordinate) {
-        
         super.setType(GameObjectType.GOLDMAN);
         super.setCoordinate(coordinate);
-        
-        super.setIconDown(getImageIcon("/com/metel/goldman/images/goldman_down.png"));
-        super.setIconLeft(getImageIcon("/com/metel/goldman/images/goldman_left.png"));
-        super.setIconUp(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
-        super.setIconRight(getImageIcon("/com/metel/goldman/images/goldman_right.png"));
-        
-        super.setIcon(super.getIconUp());
+        super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
     }
-    
-    public void addTotalScore(int score) {
+
+    public void addSTotalcore(int score) {
         this.totalScore += score;
     }
-    
+
     public int getTotalScore() {
         return totalScore;
     }
-    
+
     public int getTurnsNumber() {
         return turnsNumber;
     }
-    
+
     public void setTurnsNumber(int turnsNumber) {
         this.turnsNumber = turnsNumber;
     }
 
     @Override
-    public void getMoveResult(AbstractGameObject objectInNewCoordinate) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void changeIcon(MovingDirection direction) {
+        switch (direction) {
+            case DOWN:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_down.png"));
+                break;
+            case LEFT:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_left.png"));
+                break;
+            case RIGHT:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_right.png"));
+                break;
+            case UP:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
+                break;
+        }
     }
-    
-    
-    
 }

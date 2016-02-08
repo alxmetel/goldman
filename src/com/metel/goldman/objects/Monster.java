@@ -17,27 +17,29 @@ import com.metel.goldman.enums.MovingDirection;
  */
 
 public class Monster extends AbstractMovingObject {
-    
+
     public Monster(Coordinate coordinate) {
         super.setType(GameObjectType.MONSTER);
         super.setCoordinate(coordinate);
-        
-        super.setIconDown(getImageIcon("/com/metel/goldman/images/monster_down.jpg"));
-        super.setIconUp(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
-        super.setIconLeft(getImageIcon("/com/metel/goldman/images/monster_left.jpg"));
-        super.setIconRight(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
-        
-        super.setIcon(getIconLeft()); //по умолчанию будет использоваться эта иконка
+
+        super.setIcon(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
     }
 
     @Override
-    public void move(MovingDirection direction) {
-        
+    public void changeIcon(MovingDirection direction) {
+        switch (direction) {
+            case DOWN:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_down.jpg"));
+                break;
+            case LEFT:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
+                break;
+            case RIGHT:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
+                break;
+            case UP:
+                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
+                break;
+        }
     }
-
-    @Override
-    public void getMoveResult(AbstractGameObject objectInNewCoordinate) {
-        
-    }
-    
 }

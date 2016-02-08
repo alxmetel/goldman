@@ -5,9 +5,8 @@
  */
 package com.metel.goldman.interfaces.gameobjects;
 
-import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.enums.MovingDirection;
-import javax.swing.ImageIcon;
 
 /**
  *
@@ -15,17 +14,8 @@ import javax.swing.ImageIcon;
  * Поведение для всех движущихся объектов
  */
 
-public interface MovingObject extends StaticObject {
+public interface MovingObject extends StaticObject{
     
-    void move(MovingDirection direction);
-    void getMoveResult(AbstractGameObject objectInNewCoordinate);
-    
-    // иконки при движении в разные стороны
-    ImageIcon getIconLeft();
-    ImageIcon getIconUp();
-    ImageIcon getIconDown();
-    ImageIcon getIconRight();
-
+    void move(MovingDirection direction, AbstractGameMap abstractGameMap);
    
-    
 }
