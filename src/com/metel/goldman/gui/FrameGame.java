@@ -5,8 +5,8 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.interfaces.GameMap;
-import com.metel.goldman.objects.maps.FSGameMap;
+import com.metel.goldman.interfaces.gamemap.DrawableMap;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
@@ -15,16 +15,21 @@ import java.awt.event.ActionListener;
  */
 public class FrameGame extends BaseChildFrame implements ActionListener {
 
+    private DrawableMap gameMap; //передаем объект карты, которая умеет себя рисовать
     /**
      * Creates new form FrameGame
      */
     
-    private GameMap gameMap = new FSGameMap(); // загрузка карты с файловой системы
-    
     public FrameGame() {
         initComponents();
+    }
+    
+    public void setMap(DrawableMap gameMap) {
+        this.gameMap = gameMap;
+        gameMap.drawMap();
         
-        gameMap.loadMap("game.map");
+        jPanelMap.removeAll();
+        jPanelMap.add(gameMap.getMap());
     }
 
     /**
@@ -37,7 +42,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jPanelMap = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jbtnUp = new javax.swing.JButton();
         jbtnLeft = new javax.swing.JButton();
@@ -59,18 +64,17 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setName("FrameGame"); // NOI18N
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel2.setPreferredSize(new java.awt.Dimension(400, 400));
+        jPanelMap.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 396, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanelMapLayout = new javax.swing.GroupLayout(jPanelMap);
+        jPanelMap.setLayout(jPanelMapLayout);
+        jPanelMapLayout.setHorizontalGroup(
+            jPanelMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 296, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 387, Short.MAX_VALUE)
+        jPanelMapLayout.setVerticalGroup(
+            jPanelMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -142,21 +146,21 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
                         .addGap(37, 37, 37))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                         .addComponent(jbtnLeft, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                         .addComponent(jbtnRight, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jbtnSave, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlabelTurnsLeftText)
-                            .addComponent(jlableScoreText))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jlabelScore)
-                            .addComponent(jlabelTurnsLeft))
-                        .addGap(0, 24, Short.MAX_VALUE))
                     .addComponent(jbtnExit, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlabelTurnsLeftText)
+                    .addComponent(jlableScoreText))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jlabelScore)
+                    .addComponent(jlabelTurnsLeft))
+                .addGap(29, 29, 29))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,7 +173,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
                     .addComponent(jbtnRight))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbtnDown)
-                .addGap(53, 53, 53)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlableScoreText)
                     .addComponent(jlabelScore))
@@ -177,11 +181,11 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jlabelTurnsLeftText)
                     .addComponent(jlabelTurnsLeft))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addComponent(jbtnSave)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jbtnExit)
-                .addGap(50, 50, 50))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -190,7 +194,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanelMap, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -200,9 +204,8 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(jPanelMap, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         jMenu1.setText("File");
@@ -232,10 +235,12 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
-        setSize(new java.awt.Dimension(579, 473));
+        setSize(new java.awt.Dimension(479, 404));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -272,8 +277,8 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanelMap;
     private javax.swing.JButton jbtnDown;
     private javax.swing.JButton jbtnExit;
     private javax.swing.JButton jbtnLeft;
@@ -287,24 +292,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-        if (evt.getSource() == jbtnLeft) {
-            FrameGame.this.jbtnLeftActionPerformed(evt);
-        }
-        else if (evt.getSource() == jbtnUp) {
-            FrameGame.this.jbtnUpActionPerformed(evt);
-        }
-        else if (evt.getSource() == jbtnRight) {
-            FrameGame.this.jbtnRightActionPerformed(evt);
-        }
-        else if (evt.getSource() == jbtnDown) {
-            FrameGame.this.jbtnDownActionPerformed(evt);
-        }
-        else if (evt.getSource() == jbtnSave) {
-            FrameGame.this.jbtnSaveActionPerformed(evt);
-        }
-        else if (evt.getSource() == jbtnExit) {
-            FrameGame.this.jbtnExitActionPerformed(evt);
-        }
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

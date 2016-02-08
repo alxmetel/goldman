@@ -30,6 +30,9 @@ public class GameObjectCreator {
         }
         return instance;
     }
+
+    private GameObjectCreator() {
+    }
     
     public AbstractGameObject createObject(GameObjectType type, Coordinate coordinate) {
         

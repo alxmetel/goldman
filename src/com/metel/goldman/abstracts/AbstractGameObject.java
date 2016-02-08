@@ -7,7 +7,7 @@ package com.metel.goldman.abstracts;
 
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.enums.GameObjectType;
-import com.metel.goldman.interfaces.StaticObject;
+import com.metel.goldman.interfaces.gameobjects.StaticObject;
 import java.util.Objects;
 import javax.swing.ImageIcon;
 
@@ -25,7 +25,7 @@ public abstract class AbstractGameObject implements StaticObject {
     
     private ImageIcon icon = getImageIcon("/com/metel/goldman/images/noicon.png"); //изображение по умолчанию
 
-    public AbstractGameObject() {
+    protected AbstractGameObject() {
     }
 
     @Override

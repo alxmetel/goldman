@@ -1,6 +1,5 @@
 package com.metel.goldman.gui;
 
-import java.awt.HeadlessException;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
@@ -19,7 +18,7 @@ public abstract class BaseChildFrame extends JFrame {
     
     private JFrame parentFrame;
     
-    public JFrame parentFrame() {
+    public JFrame getParentFrame() {
         return parentFrame;
     }
     

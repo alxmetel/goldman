@@ -19,6 +19,6 @@ public class Exit extends AbstractGameObject {
     public Exit(Coordinate coordinate) {
         super.setType(GameObjectType.EXIT);
         super.setCoordinate(coordinate);
-        super.setIcon(getImageIcon("/com/metel/goldman/images/exit.png"));
+        super.setIcon(getImageIcon("/com/metel/goldman/images/exit.gif"));
     }
 }

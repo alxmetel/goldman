@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.interfaces;
+package com.metel.goldman.interfaces.gameobjects;
 
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.enums.GameObjectType;

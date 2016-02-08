@@ -7,10 +7,11 @@ package com.metel.goldman.abstracts;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
-import com.metel.goldman.interfaces.GameMap;
+import com.metel.goldman.interfaces.gamemap.GameMap;
 import com.metel.goldman.objects.Coordinate;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 
@@ -21,7 +22,7 @@ import java.util.HashMap;
  */
 public abstract class AbstractGameMap implements GameMap, Serializable { //Serializable нужен для сериализации (сохранения)объекта карты, чтобы можно было сохранять игру и восстанавливать
     
-    private static final long serialVersioUID = 1L;
+    private static final long serialVersionUID = 1L;
     private int width;
     private int height;
     private int timeLimit;
@@ -106,8 +107,12 @@ public abstract class AbstractGameMap implements GameMap, Serializable { //Seria
         return goldManExist && exitExist; //если есть и входи выход, карта валидна
     }
     
-    public ArrayList<AbstractGameObject> getList(GameObjectType type) {
+    public ArrayList<AbstractGameObject> getGameObjects(GameObjectType type) {
         return typeObjects.get(type);
+    }
+    
+    public Collection<AbstractGameObject> getAllGameObjects() {
+        return gameObjects.values();
     }
     
     public AbstractGameObject getObjectByCoordinate(Coordinate coordinate) {

@@ -7,7 +7,7 @@ package com.metel.goldman.abstracts;
 
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.interfaces.MovingObject;
+import com.metel.goldman.interfaces.gameobjects.MovingObject;
 import javax.swing.ImageIcon;
 
 /**
