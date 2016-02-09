@@ -5,7 +5,9 @@
  */
 package com.metel.goldman.objects;
 
+import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.abstracts.AbstractMovingObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 
@@ -58,5 +60,23 @@ public class GoldMan extends AbstractMovingObject {
                 super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
                 break;
         }
+    }
+
+    @Override
+    public ActionResult doAction(AbstractGameObject gameObject) {
+        turnsNumber++;
+        
+        switch (gameObject.getType()) {
+            
+            case TREASURE: {
+                totalScore += ((Treasure) gameObject).getScore();
+                return ActionResult.COLLECT_TREASURE;
+            }
+            
+            case MONSTER: {
+                return ActionResult.DIE;
+            }
+        }
+        return super.doAction(gameObject);
     }
 }

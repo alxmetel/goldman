@@ -5,9 +5,13 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
+import com.metel.goldman.objects.GoldMan;
+import com.metel.goldman.utils.MessageManager;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -32,6 +36,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         this.gameMap = gameMap;
         gameMap.drawMap();
 
+        jlabelTurnsLeft.setText(String.valueOf(gameMap.getGameMap().getTimeLimit()));
         jPanelMap.removeAll();
         jPanelMap.add(gameMap.getMapComponent());
     }
@@ -301,8 +306,31 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
     }
     
     private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
-        gameMap.getGameMap().move(movingDirection, gameObjectType);
+        ActionResult result = gameMap.getGameMap().move(movingDirection, gameObjectType);
+
+        if (result == ActionResult.DIE) {
+            gameOver();
+            return;
+        }
+
         gameMap.drawMap();
+
+        if (gameObjectType == GameObjectType.GOLDMAN) {
+            GoldMan goldMan = (GoldMan) gameMap.getGameMap().getGameCollection().getGameObjects(gameObjectType).get(0);
+
+            if (goldMan.getTurnsNumber() >= gameMap.getGameMap().getTimeLimit()) {
+                gameOver();
+                return;
+            }
+
+            jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
+            jlabelTurnsLeft.setText(String.valueOf(gameMap.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
+        }
+    }
+    
+    private void gameOver() {
+        MessageManager.showInformMessage(null, "You lost the game!");
+        closeFrame();
     }
 
     @Override

@@ -6,6 +6,7 @@
 package com.metel.goldman.interfaces.collections;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.objects.Coordinate;
@@ -27,5 +28,5 @@ public interface GameCollection{
     
     List<AbstractGameObject> getGameObjects(GameObjectType type);
     
-    void moveObject(MovingDirection direction, GameObjectType gameObjectType);
+    ActionResult moveObject(MovingDirection direction, GameObjectType gameObjectType);
 }

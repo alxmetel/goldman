@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -12,6 +12,7 @@ import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.objects.Coordinate;
+import com.metel.goldman.objects.Nothing;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -62,25 +63,33 @@ public class MapCollection implements GameCollection {
     }
 
     @Override
-    public void moveObject(MovingDirection direction, GameObjectType gameObjectType) {
-        for (AbstractGameObject gameObject : this.getGameObjects(gameObjectType)) { //ищем все объекты по этому типу
-            if (gameObject instanceof AbstractMovingObject) {
-                AbstractMovingObject movingObject = (AbstractMovingObject) gameObject; //определяем объекты
+    public ActionResult moveObject(MovingDirection direction, GameObjectType gameObjectType) {
+        
+        ActionResult actionResult = null;
+        
+        for (AbstractGameObject gameObject : this.getGameObjects(gameObjectType)) {
+            if (gameObject instanceof AbstractMovingObject) {// дорогостоящая операция - instanceof
+                AbstractMovingObject movingObject = (AbstractMovingObject) gameObject;
 
-                Coordinate newCoordinate = getNewCoordinate(direction, movingObject); //определяем новые координаты
+                Coordinate newCoordinate = getNewCoordinate(direction, movingObject);
 
-                AbstractGameObject objectInNewCoordinate = getObjectByCoordinate(newCoordinate); //определяем объект в новых координатах
+                AbstractGameObject objectInNewCoordinate = getObjectByCoordinate(newCoordinate);
 
-                ActionResult actionResult = movingObject.moveToObject(direction, objectInNewCoordinate);
+                actionResult = movingObject.moveToObject(direction, objectInNewCoordinate);
 
                 switch (actionResult) {
                     case MOVE: {
                         swapObjects(movingObject, objectInNewCoordinate);
                         break;
-                    }                
+                    }
+                    case COLLECT_TREASURE: {
+                        swapObjects(movingObject, new Nothing(newCoordinate));
+                        break;
+                    }
                 }
             }
         }
+        return actionResult;
     }
     
     private void swapObjects(AbstractGameObject obj1, AbstractGameObject obj2) {
