@@ -6,6 +6,8 @@
 package com.metel.goldman.interfaces.gameobjects;
 
 import com.metel.goldman.abstracts.AbstractGameMap;
+import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.MovingDirection;
 
 /**
@@ -16,6 +18,8 @@ import com.metel.goldman.enums.MovingDirection;
 
 public interface MovingObject extends StaticObject{
     
-    void move(MovingDirection direction, AbstractGameMap abstractGameMap);
+    ActionResult moveToObject(MovingDirection direction, AbstractGameObject gameObject);
+    
+    int getStep();
    
 }

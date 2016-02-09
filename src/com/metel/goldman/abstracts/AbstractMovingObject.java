@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.abstracts;
 
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gameobjects.MovingObject;
 import com.metel.goldman.objects.Coordinate;
@@ -19,55 +20,43 @@ import com.metel.goldman.objects.Coordinate;
 public abstract class AbstractMovingObject extends AbstractGameObject implements MovingObject {
 
     public abstract void changeIcon(MovingDirection direction);
+    
+    private int step = 1;// по-умолчанию у всех объектов шаг равен 1
 
-    @Override
-    public void move(MovingDirection direction, AbstractGameMap gameMap) {
-
-        Coordinate newCoordinate = getNewCoordinate(direction);
-        
-
-        AbstractGameObject objectInNewCoordinate = gameMap.getGameCollection().getObjectByCoordinate(newCoordinate);
-
-        switch (objectInNewCoordinate.getType()) {
-
-            case NOTHING: {
-                changeIcon(direction);
-                setCoordinate(newCoordinate);
-            }
-            default: {
-            }
-        }
+    public int getStep() {
+        return step;
     }
 
-    public Coordinate getNewCoordinate(MovingDirection direction) {
+    public void setStep(int step) {
+        this.step = step;
+    }
+    
+    protected void actionBeforeMove(MovingDirection direction) {
 
-        // берем текущие координаты объекта, которые нужно передвинуть (индексы начинаются с нуля)
-        int x = this.getCoordinate().getX();
-        int y = this.getCoordinate().getY();
+        // при движении объект должен сменить иконку и произвести звук
+        changeIcon(direction);
+        // playSound(); на будушее
+    }
 
+    @Override
+    public ActionResult moveToObject(MovingDirection direction, AbstractGameObject gameObject) {
+        actionBeforeMove(direction);
+        return doAction(gameObject);
+    }
 
-        Coordinate newCoordinate = new Coordinate(x, y);
+    public ActionResult doAction(AbstractGameObject gameObject) {
 
+        if (gameObject == null) { // край карты
+            return ActionResult.NO_ACTION;
+        }
 
-        switch (direction) {// определяем, в каком направлении нужно двигаться по массиву
-            case UP: {
-                newCoordinate.setY(y - 1);
-                break;
-            }
-            case DOWN: {
-                newCoordinate.setY(y + 1);
-                break;
-            }
-            case LEFT: {
-                newCoordinate.setX(x - 1);
-                break;
-            }
-            case RIGHT: {
-                newCoordinate.setX(x + 1);
-                break;
+        switch (gameObject.getType()) {
+
+            case NOTHING: {
+                return ActionResult.MOVE;
             }
         }
 
-        return newCoordinate;
+        return ActionResult.NO_ACTION;
     }
 }

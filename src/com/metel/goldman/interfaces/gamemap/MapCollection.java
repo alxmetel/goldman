@@ -6,7 +6,10 @@
 package com.metel.goldman.interfaces.gamemap;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.abstracts.AbstractMovingObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
+import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.objects.Coordinate;
 import java.util.ArrayList;
@@ -56,5 +59,74 @@ public class MapCollection implements GameCollection {
 
         gameObjects.put(gameObject.getCoordinate(), gameObject);
         typeObjects.put(gameObject.getType(), tmpList);
+    }
+
+    @Override
+    public void moveObject(MovingDirection direction, GameObjectType gameObjectType) {
+        for (AbstractGameObject gameObject : this.getGameObjects(gameObjectType)) { //ищем все объекты по этому типу
+            if (gameObject instanceof AbstractMovingObject) {
+                AbstractMovingObject movingObject = (AbstractMovingObject) gameObject; //определяем объекты
+
+                Coordinate newCoordinate = getNewCoordinate(direction, movingObject); //определяем новые координаты
+
+                AbstractGameObject objectInNewCoordinate = getObjectByCoordinate(newCoordinate); //определяем объект в новых координатах
+
+                ActionResult actionResult = movingObject.moveToObject(direction, objectInNewCoordinate);
+
+                switch (actionResult) {
+                    case MOVE: {
+                        swapObjects(movingObject, objectInNewCoordinate);
+                        break;
+                    }                
+                }
+            }
+        }
+    }
+    
+    private void swapObjects(AbstractGameObject obj1, AbstractGameObject obj2) {
+
+        swapCoordinates(obj1, obj2);
+
+        gameObjects.put(obj1.getCoordinate(), obj1);
+        gameObjects.put(obj2.getCoordinate(), obj2);
+
+    }
+    
+    private void swapCoordinates(AbstractGameObject obj1, AbstractGameObject obj2) {
+        Coordinate tmpCoordinate = obj1.getCoordinate();
+        obj1.setCoordinate(obj2.getCoordinate());
+        obj2.setCoordinate(tmpCoordinate);
+    }
+    
+    private Coordinate getNewCoordinate(MovingDirection direction, AbstractMovingObject movingObject) {
+
+        // берем текущие координаты объекта, которые нужно передвинуть (индексы начинаются с нуля)
+        int x = movingObject.getCoordinate().getX();
+        int y = movingObject.getCoordinate().getY();
+
+
+        Coordinate newCoordinate = new Coordinate(x, y);
+
+
+        switch (direction) {// определяем, в каком направлении нужно двигаться
+            case UP: {
+                newCoordinate.setY(y - movingObject.getStep());
+                break;
+            }
+            case DOWN: {
+                newCoordinate.setY(y + movingObject.getStep());
+                break;
+            }
+            case LEFT: {
+                newCoordinate.setX(x - movingObject.getStep());
+                break;
+            }
+            case RIGHT: {
+                newCoordinate.setX(x + movingObject.getStep());
+                break;
+            }
+        }
+
+        return newCoordinate;
     }
 }
