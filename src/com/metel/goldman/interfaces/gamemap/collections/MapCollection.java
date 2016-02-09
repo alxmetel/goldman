@@ -3,35 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.interfaces.gamemap;
+package com.metel.goldman.interfaces.gamemap.collections;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.interfaces.collections.GameCollection;
 import com.metel.goldman.objects.Coordinate;
+import com.metel.goldman.objects.GoldMan;
 import com.metel.goldman.objects.Nothing;
+import com.metel.goldman.objects.listeners.MapListenersRegistrator;
+import com.metel.goldman.objects.listeners.MoveResultListener;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  *
  * @author Metel
  */
-public class MapCollection implements GameCollection {
+public class MapCollection extends MapListenersRegistrator {// объекты для карты, которые умеют уведомлять всех слушателей о своих ходах
 
     private HashMap<Coordinate, AbstractGameObject> gameObjects = new HashMap<>();// хранит все объекты с доступом по координатам
     private EnumMap<GameObjectType, ArrayList<AbstractGameObject>> typeObjects = new EnumMap<>(GameObjectType.class); // хранит список объектов для каждого типа    
 
     @Override
     public List<AbstractGameObject> getAllGameObjects() {
-        return new ArrayList(gameObjects.values());
+        return new ArrayList(gameObjects.values());// ! узкое место - каждый раз создается новая коллекция
     }
-    
+
     @Override
     public List<AbstractGameObject> getGameObjects(GameObjectType type) {
         return typeObjects.get(type);
@@ -60,16 +63,25 @@ public class MapCollection implements GameCollection {
 
         gameObjects.put(gameObject.getCoordinate(), gameObject);
         typeObjects.put(gameObject.getType(), tmpList);
+
     }
 
     @Override
-    public ActionResult moveObject(MovingDirection direction, GameObjectType gameObjectType) {
-        
+    public void moveObject(MovingDirection direction, GameObjectType gameObjectType) {
+
+        GoldMan goldMan = (GoldMan) getGameObjects(GameObjectType.GOLDMAN).get(0);
+
         ActionResult actionResult = null;
-        
+
         for (AbstractGameObject gameObject : this.getGameObjects(gameObjectType)) {
             if (gameObject instanceof AbstractMovingObject) {// дорогостоящая операция - instanceof
                 AbstractMovingObject movingObject = (AbstractMovingObject) gameObject;
+
+
+
+                if (direction == null) {
+                    direction = getRandomMoveDirection(movingObject);
+                }
 
                 Coordinate newCoordinate = getNewCoordinate(direction, movingObject);
 
@@ -86,12 +98,24 @@ public class MapCollection implements GameCollection {
                         swapObjects(movingObject, new Nothing(newCoordinate));
                         break;
                     }
+
+                    case WIN:
+                    case DIE: {
+                        break;
+                    }
+
                 }
+
             }
+
+            notifyMoveListeners(actionResult, goldMan);
         }
-        return actionResult;
+
+
+        
+
     }
-    
+
     private void swapObjects(AbstractGameObject obj1, AbstractGameObject obj2) {
 
         swapCoordinates(obj1, obj2);
@@ -100,13 +124,13 @@ public class MapCollection implements GameCollection {
         gameObjects.put(obj2.getCoordinate(), obj2);
 
     }
-    
+
     private void swapCoordinates(AbstractGameObject obj1, AbstractGameObject obj2) {
         Coordinate tmpCoordinate = obj1.getCoordinate();
         obj1.setCoordinate(obj2.getCoordinate());
         obj2.setCoordinate(tmpCoordinate);
     }
-    
+
     private Coordinate getNewCoordinate(MovingDirection direction, AbstractMovingObject movingObject) {
 
         // берем текущие координаты объекта, которые нужно передвинуть (индексы начинаются с нуля)
@@ -137,5 +161,84 @@ public class MapCollection implements GameCollection {
         }
 
         return newCoordinate;
+    }
+
+    private MovingDirection getRandomMoveDirection(AbstractMovingObject movingObject) {
+
+        GoldMan goldMan = (GoldMan) getGameObjects(GameObjectType.GOLDMAN).get(0);
+
+        MovingDirection direction = null;
+
+        int characterX = goldMan.getCoordinate().getX();
+        int characterY = goldMan.getCoordinate().getY();
+
+        int monsterX = movingObject.getCoordinate().getX();
+        int monsterY = movingObject.getCoordinate().getY();
+
+        int number = getRandomInt(2);// 50% шанс чтобы двинуться к игроку
+        // может сгенерить 1 или 0. это и будет 50% шанса
+        if (number == 1) { // 0 - двигаться по направлению к игроку
+            // наугад берется любое направление к игроку
+            number = getRandomInt(2);
+            switch (number) {// двигаться по оси X в сторону игрока или по оси Y
+                case 1: {
+                    if (monsterX > characterX) {
+                        direction = MovingDirection.LEFT;
+                    } else {
+                        direction = MovingDirection.RIGHT;
+                    }
+                    break;
+                }
+                case 2: {
+                    if (monsterY > characterY) {
+                        direction = MovingDirection.UP;
+                    } else {
+                        direction = MovingDirection.DOWN;
+                    }
+                    break;
+                }
+
+            }
+        } else { // 1 - двигаться по направлению от игрока
+            number = getRandomInt(2);
+            switch (number) {// двигаться по оси X от игрока или по оси Y
+                case 1: {
+                    if (monsterX > characterX) {
+                        direction = MovingDirection.RIGHT;
+                    } else {
+                        direction = MovingDirection.LEFT;
+                    }
+                    break;
+                }
+                case 2: {
+                    if (monsterY > characterY) {
+                        direction = MovingDirection.DOWN;
+                    } else {
+                        direction = MovingDirection.UP;
+                    }
+                    break;
+                }
+            }
+        }
+        
+
+        return direction;
+    }
+
+    private int getRandomInt(int i) {
+        Random r = new Random();
+        return r.nextInt(i) + 1;
+    }
+
+    @Override
+    public void notifyMoveListeners(ActionResult actionResult, GoldMan goldMan) {
+        for (MoveResultListener listener : getMoveListeners()) {
+            listener.notifyActionResult(actionResult, goldMan);
+        }
+    }
+
+    @Override
+    public void moveObjectRandom(GameObjectType objectType) {
+        moveObject(null, objectType);
     }
 }

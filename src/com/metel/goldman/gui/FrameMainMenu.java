@@ -6,7 +6,7 @@
 package com.metel.goldman.gui;
 
 import com.metel.goldman.enums.LocationType;
-import com.metel.goldman.interfaces.gamemap.MapCollection;
+import com.metel.goldman.interfaces.gamemap.collections.MapCollection;
 import com.metel.goldman.objects.gui.maps.JTableGameMap;
 
 /**
@@ -18,8 +18,6 @@ public class FrameMainMenu extends javax.swing.JFrame {
     private FrameGame frameGame;
     private FrameStat frameStat = new FrameStat();
     private FrameSavedGames frameLoadGame = new FrameSavedGames();
-    
-    private JTableGameMap gameMap = new JTableGameMap(LocationType.FS, "game.map", new MapCollection());
     
     /**
      * Creates new form FrameMainMenu
@@ -137,7 +135,7 @@ public class FrameMainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNewGameActionPerformed
-        if (frameGame == null) {
+        if (frameGame == null){
             frameGame = new FrameGame();
         }
         frameGame.setMap(new JTableGameMap(LocationType.FS, "game.map", new MapCollection()));

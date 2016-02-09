@@ -10,6 +10,7 @@ import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.objects.GoldMan;
+import com.metel.goldman.objects.listeners.MoveResultListener;
 import com.metel.goldman.utils.MessageManager;
 
 import java.awt.event.ActionEvent;
@@ -21,9 +22,9 @@ import java.awt.event.KeyListener;
  *
  * @author Metel
  */
-public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener {
+public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener, MoveResultListener {
 
-    private DrawableMap gameMap; // передаем объект карты, которая умеет себя рисовать
+    private DrawableMap map; // передаем объект карты, которая умеет себя рисовать
 
     /**
      * Creates new form FrameGame
@@ -33,8 +34,10 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
     }
 
     public void setMap(DrawableMap gameMap) {
-        this.gameMap = gameMap;
+        this.map = gameMap;
         gameMap.drawMap();
+        
+        gameMap.getGameMap().getGameCollection().addMoveListener(this); 
 
         jlabelTurnsLeft.setText(String.valueOf(gameMap.getGameMap().getTimeLimit()));
         jPanelMap.removeAll();
@@ -305,34 +308,6 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
-        ActionResult result = gameMap.getGameMap().move(movingDirection, gameObjectType);
-
-        if (result == ActionResult.DIE) {
-            gameOver();
-            return;
-        }
-
-        gameMap.drawMap();
-
-        if (gameObjectType == GameObjectType.GOLDMAN) {
-            GoldMan goldMan = (GoldMan) gameMap.getGameMap().getGameCollection().getGameObjects(gameObjectType).get(0);
-
-            if (goldMan.getTurnsNumber() >= gameMap.getGameMap().getTimeLimit()) {
-                gameOver();
-                return;
-            }
-
-            jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
-            jlabelTurnsLeft.setText(String.valueOf(gameMap.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
-        }
-    }
-    
-    private void gameOver() {
-        MessageManager.showInformMessage(null, "You lost the game!");
-        closeFrame();
-    }
-
     @Override
     public void keyTyped(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -346,5 +321,42 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
     @Override
     public void keyReleased(KeyEvent e) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
+        map.getGameMap().getGameCollection().moveObject(movingDirection, gameObjectType);
+    }
+
+    private void gameOver() {
+        MessageManager.showInformMessage(null, "You lost the game!");
+        closeFrame();
+    }
+
+    @Override
+    public void notifyActionResult(ActionResult actionResult, GoldMan goldMan) {
+
+        switch (actionResult) {
+            case MOVE: {
+                jlabelTurnsLeft.setText(String.valueOf(map.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
+
+                if (goldMan.getTurnsNumber() >= map.getGameMap().getTimeLimit()) {
+                    gameOver();
+                }
+
+                break;
+            }
+
+            case DIE: {
+                gameOver();
+                break;
+            }
+
+            case COLLECT_TREASURE: {
+                jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
+                break;
+            }
+        }
+
+        map.drawMap();
     }
 }

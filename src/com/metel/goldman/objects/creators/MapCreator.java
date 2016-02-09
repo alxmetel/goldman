@@ -7,7 +7,7 @@ package com.metel.goldman.objects.creators;
 
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.enums.LocationType;
-import com.metel.goldman.interfaces.collections.GameCollection;
+import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.objects.maps.FSGameMap;
 
 /**

@@ -8,7 +8,7 @@ package com.metel.goldman.objects.maps;
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
-import com.metel.goldman.interfaces.collections.GameCollection;
+import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.creators.GameObjectCreator;
 import java.io.BufferedReader;

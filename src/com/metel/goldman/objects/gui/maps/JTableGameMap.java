@@ -9,14 +9,17 @@ import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.LocationType;
-import com.metel.goldman.interfaces.collections.GameCollection;
+import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.Nothing;
 import com.metel.goldman.objects.Wall;
 import com.metel.goldman.objects.creators.MapCreator;
 import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JTable;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -25,12 +28,11 @@ import javax.swing.table.TableColumn;
  * @author Metel
  */
 public class JTableGameMap implements DrawableMap {
-    
+
     private JTable jTableMap = new JTable();
-    
     private AbstractGameMap gameMap;
     private String[] columnNames;
-    //объекты для отображения на карте будут храниться в двумерном массиве типа AbstractGameObject
+    // объекты для отображения на карте будут храниться в двумерном массиве типа AbstractGameObject
     // каждый элемент массива будет обозначаться согласно текстовому представлению объекта как описано в GameObjectType
     private AbstractGameObject[][] mapObjects;
 
@@ -44,26 +46,27 @@ public class JTableGameMap implements DrawableMap {
         jTableMap.setTableHeader(null);
         jTableMap.setUpdateSelectionOnSort(false);
         jTableMap.setVerifyInputWhenFocusTarget(false);
-        
+
         gameMap = MapCreator.getInstance().createMap(type, gameCollection);
         gameMap.loadMap(source);
     }
-    
-    private void fillEmptyMap(int width, int height){
+
+
+    private void fillEmptyMap(int width, int height) {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 mapObjects[y][x] = new Nothing(new Coordinate(x, y));
             }
         }
     }
-    
+
     private void updateObjectsArray() {
-        
+
         mapObjects = new AbstractGameObject[gameMap.getHeight()][gameMap.getWidth()];
-        
+
         fillEmptyMap(gameMap.getWidth(), gameMap.getHeight());
-        
-        // потом заполнить массив объектами
+
+        // потом заполнить массив объектами		
         for (AbstractGameObject gameObj : gameMap.getGameCollection().getAllGameObjects()) {
             if (!gameObj.getType().equals(GameObjectType.NOTHING)) {// пустоты не добавляем, т.к. они уже добавились когда мы вызвали метод fillEmptyMap()
                 int y = gameObj.getCoordinate().getY();
@@ -81,9 +84,9 @@ public class JTableGameMap implements DrawableMap {
 
     @Override
     public boolean drawMap() {
-        
+
         updateObjectsArray();
-        
+
         try {
             // присваиваем пустоту всем заголовкам столбцов, чтобы у таблицы не было заголовоков, а то некрасиво смотрится
             columnNames = new String[gameMap.getWidth()];
@@ -92,10 +95,8 @@ public class JTableGameMap implements DrawableMap {
                 columnNames[i] = "";
             }
 
-
             // игровое поле будет отображаться в super без заголовков столбцов
             jTableMap.setModel(new DefaultTableModel(mapObjects, columnNames));
-
 
             // вместо текста в ячейках таблицы устанавливаем отображение картинки
             for (int i = 0; i < jTableMap.getColumnCount(); i++) {
@@ -118,5 +119,32 @@ public class JTableGameMap implements DrawableMap {
     @Override
     public AbstractGameMap getGameMap() {
         return gameMap;
+    }
+
+    private TimeMover timeMover = new TimeMover();
+
+    private class TimeMover implements ActionListener {
+
+        private Timer timer;
+        private final static int MOVING_PAUSE = 500;
+
+        private TimeMover() {
+            timer = new Timer(MOVING_PAUSE, this);
+            timer.setInitialDelay(0);
+            timer.start();
+        }
+
+        public void start() {
+            timer.start();
+        }
+
+        public void stop() {
+            timer.stop();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            gameMap.getGameCollection().moveObjectRandom(GameObjectType.MONSTER);
+        }
     }
 }

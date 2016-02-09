@@ -5,10 +5,7 @@
  */
 package com.metel.goldman.abstracts;
 
-import com.metel.goldman.enums.ActionResult;
-import com.metel.goldman.enums.GameObjectType;
-import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.interfaces.collections.GameCollection;
+import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.GameMap;
 import java.io.Serializable;
 import java.util.logging.Level;
@@ -111,9 +108,4 @@ public abstract class AbstractGameMap implements GameMap, Serializable {
     public void setGameCollection(GameCollection gameCollection) {
         this.gameCollection = gameCollection;
     }
-
-    public ActionResult move(MovingDirection direction, GameObjectType gameObjectType) {
-        return getGameCollection().moveObject(direction, gameObjectType);
-   
-    }  
 }
