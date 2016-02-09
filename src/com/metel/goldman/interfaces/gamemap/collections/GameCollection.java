@@ -9,6 +9,7 @@ import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
+import com.metel.goldman.movestrategies.MoveStrategy;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.listeners.MoveResultNotifier;
 import java.util.List;
@@ -31,5 +32,5 @@ public interface GameCollection extends MoveResultNotifier{
     
     void moveObject(MovingDirection direction, GameObjectType gameObjectType);
     
-    void moveObjectRandom(GameObjectType objectType);
+    void moveObject(MoveStrategy moveStrategy, GameObjectType gameObjectType);
 }

@@ -64,18 +64,22 @@ public class GoldMan extends AbstractMovingObject {
 
     @Override
     public ActionResult doAction(AbstractGameObject gameObject) {
+
         turnsNumber++;
-        
+
         switch (gameObject.getType()) {
-            
+
             case TREASURE: {
                 totalScore += ((Treasure) gameObject).getScore();
                 return ActionResult.COLLECT_TREASURE;
             }
-            
-            case MONSTER: {
+            case MONSTER:  {
                 return ActionResult.DIE;
-            }
+            }  
+            case EXIT:{
+                totalScore *= 2;
+                return ActionResult.WIN;
+            }  
         }
         return super.doAction(gameObject);
     }

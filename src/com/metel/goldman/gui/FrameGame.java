@@ -327,10 +327,13 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         map.getGameMap().getGameCollection().moveObject(movingDirection, gameObjectType);
     }
 
-    private void gameOver() {
-        MessageManager.showInformMessage(null, "You lost the game!");
+    private void gameFinished(String message) {
+        MessageManager.showInformMessage(null, message);
         closeFrame();
     }
+    
+    private static final String DIE_MESSAGE="You lost the game!";
+    private static final String WIN_MESSAGE="You won! Your points:";
 
     @Override
     public void notifyActionResult(ActionResult actionResult, GoldMan goldMan) {
@@ -340,15 +343,19 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
                 jlabelTurnsLeft.setText(String.valueOf(map.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
 
                 if (goldMan.getTurnsNumber() >= map.getGameMap().getTimeLimit()) {
-                    gameOver();
+                    gameFinished(DIE_MESSAGE);
                 }
 
                 break;
             }
 
             case DIE: {
-                gameOver();
+                gameFinished(DIE_MESSAGE);
                 break;
+            }
+            
+            case WIN:{
+                gameFinished(WIN_MESSAGE+goldMan.getTotalScore());
             }
 
             case COLLECT_TREASURE: {

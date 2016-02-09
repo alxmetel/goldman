@@ -7,14 +7,18 @@ package com.metel.goldman.objects.gui.maps;
 
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.LocationType;
 import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
+import com.metel.goldman.movestrategies.AgressiveMoving;
 import com.metel.goldman.objects.Coordinate;
+import com.metel.goldman.objects.GoldMan;
 import com.metel.goldman.objects.Nothing;
 import com.metel.goldman.objects.Wall;
 import com.metel.goldman.objects.creators.MapCreator;
+import com.metel.goldman.objects.listeners.MoveResultListener;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +53,8 @@ public class JTableGameMap implements DrawableMap {
 
         gameMap = MapCreator.getInstance().createMap(type, gameCollection);
         gameMap.loadMap(source);
+   
+        timeMover = new TimeMover();
     }
 
 
@@ -95,8 +101,10 @@ public class JTableGameMap implements DrawableMap {
                 columnNames[i] = "";
             }
 
+
             // игровое поле будет отображаться в super без заголовков столбцов
             jTableMap.setModel(new DefaultTableModel(mapObjects, columnNames));
+
 
             // вместо текста в ячейках таблицы устанавливаем отображение картинки
             for (int i = 0; i < jTableMap.getColumnCount(); i++) {
@@ -108,6 +116,8 @@ public class JTableGameMap implements DrawableMap {
             e.printStackTrace();
             return false;
         }
+
+
         return true;
     }
 
@@ -120,18 +130,20 @@ public class JTableGameMap implements DrawableMap {
     public AbstractGameMap getGameMap() {
         return gameMap;
     }
+ 
+    private TimeMover timeMover;
 
-    private TimeMover timeMover = new TimeMover();
-
-    private class TimeMover implements ActionListener {
+    private class TimeMover implements ActionListener, MoveResultListener {
 
         private Timer timer;
         private final static int MOVING_PAUSE = 500;
+        private final static int INIT_PAUSE = 1000;
 
         private TimeMover() {
             timer = new Timer(MOVING_PAUSE, this);
-            timer.setInitialDelay(0);
+            timer.setInitialDelay(INIT_PAUSE);
             timer.start();
+            gameMap.getGameCollection().addMoveListener(this);
         }
 
         public void start() {
@@ -144,7 +156,18 @@ public class JTableGameMap implements DrawableMap {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            gameMap.getGameCollection().moveObjectRandom(GameObjectType.MONSTER);
+            gameMap.getGameCollection().moveObject(new AgressiveMoving(), GameObjectType.MONSTER);
+        }
+
+        @Override
+        public void notifyActionResult(ActionResult actionResult, GoldMan goldMan) {
+            switch (actionResult){
+                case DIE: case WIN:{
+                    timer.stop();
+                    break;
+                }
+            }
         }
     }
+ 
 }
