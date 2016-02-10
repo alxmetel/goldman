@@ -9,10 +9,11 @@ import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.interfaces.gamemap.DrawableMap;
+import com.metel.goldman.interfaces.gamemap.TimeMap;
 import com.metel.goldman.objects.GoldMan;
 import com.metel.goldman.objects.listeners.MoveResultListener;
 import com.metel.goldman.objects.sound.SoundPlayer;
+import com.metel.goldman.user.AbstractUserManager;
 import com.metel.goldman.utils.MessageManager;
 
 import java.awt.event.ActionEvent;
@@ -26,17 +27,19 @@ import java.awt.event.KeyListener;
  */
 public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener, MoveResultListener {
 
-    private DrawableMap map; // передаем объект карты, которая умеет себя рисовать
+    private TimeMap map; // передаем объект карты, которая умеет себя рисовать
     private SoundPlayer soundPlayer;
+    private AbstractUserManager userManager;
 
     /**
      * Creates new form FrameGame
      */
-    public FrameGame() {
+    public FrameGame(AbstractUserManager userManager) {
+        this.userManager = userManager;
         initComponents();
     }
 
-    public void setMap(DrawableMap gameMap, SoundPlayer soundPlayer) {
+    public void setMap(TimeMap gameMap, SoundPlayer soundPlayer) {
         this.map = gameMap;
         gameMap.drawMap();
         
@@ -380,8 +383,8 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         switch (actionResult) {
 
             case DIE: {
-                gameFinished(DIE_MESSAGE);
                 soundPlayer.stopBackgoundMusic();
+                gameFinished(DIE_MESSAGE);
                 break;
             }
         }
@@ -391,5 +394,6 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
     protected void closeFrame() {
         super.closeFrame();
         soundPlayer.stopBackgoundMusic();
+        map.stop();
     }
 }

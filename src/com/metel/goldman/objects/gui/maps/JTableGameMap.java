@@ -13,6 +13,7 @@ import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.LocationType;
 import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
+import com.metel.goldman.interfaces.gamemap.TimeMap;
 import com.metel.goldman.movestrategies.AgressiveMoving;
 import com.metel.goldman.movestrategies.SlowMoving;
 import com.metel.goldman.objects.Coordinate;
@@ -32,7 +33,7 @@ import javax.swing.table.TableColumn;
  *
  * @author Metel
  */
-public class JTableGameMap implements DrawableMap {
+public class JTableGameMap implements TimeMap {
 
     private JTable jTableMap = new JTable();
     private AbstractGameMap gameMap;
@@ -129,6 +130,16 @@ public class JTableGameMap implements DrawableMap {
     }
  
     private TimeMover timeMover;
+
+    @Override
+    public void start() {
+        timeMover.start();
+    }
+
+    @Override
+    public void stop() {
+        timeMover.stop();
+    }
 
     private class TimeMover implements ActionListener, MoveResultListener {
 

@@ -87,7 +87,7 @@ public abstract class AbstractGameMap implements GameMap, Serializable {
 
     public AbstractGameObject getPriorityObject(AbstractGameObject firstObject, AbstractGameObject secondObject) {
         // приоритет объекта зависит от номера индекса объекта enum
-        return (firstObject.getType().getIndexPriority() > secondObject.getType().getIndexPriority()) ? firstObject : secondObject; // сокращенная запись условия if: если первый объект имеет больший приоритет - вернуть его, иначе вернуть второй объект
+        return (firstObject.getType().getIndexPriority() > secondObject.getType().getIndexPriority()) ? firstObject : secondObject;
     }
 
     public boolean isValidMap() {

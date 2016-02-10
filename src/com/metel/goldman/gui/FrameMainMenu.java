@@ -9,6 +9,9 @@ import com.metel.goldman.enums.LocationType;
 import com.metel.goldman.interfaces.gamemap.collections.MapCollection;
 import com.metel.goldman.objects.gui.maps.JTableGameMap;
 import com.metel.goldman.objects.sound.WavPlayer;
+import com.metel.goldman.user.AbstractUserManager;
+import com.metel.goldman.user.DbUserManager;
+import com.metel.goldman.user.User;
 
 /**
  *
@@ -19,6 +22,8 @@ public class FrameMainMenu extends javax.swing.JFrame {
     private FrameGame frameGame;
     private FrameStat frameStat = new FrameStat();
     private FrameSavedGames frameLoadGame = new FrameSavedGames();
+    private AbstractUserManager userManager = new DbUserManager();
+    private CustomDialog usernameDialog;
     
     /**
      * Creates new form FrameMainMenu
@@ -136,10 +141,15 @@ public class FrameMainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNewGameActionPerformed
-        if (frameGame == null){
-            frameGame = new FrameGame();
+        if (createNewUser() == null) {
+            return;
+        }
+
+        if (frameGame == null) {
+            frameGame = new FrameGame(userManager);
         }
         frameGame.setMap(new JTableGameMap(LocationType.FS, "game.map", new MapCollection()), new WavPlayer());
+
         frameGame.showFrame(this);
     }//GEN-LAST:event_jbtnNewGameActionPerformed
 
@@ -206,4 +216,20 @@ public class FrameMainMenu extends javax.swing.JFrame {
     private javax.swing.JButton jbtnStatistics;
     private javax.swing.JPanel jpnlMainMenu;
     // End of variables declaration//GEN-END:variables
+
+    private User createNewUser() {
+
+        if (usernameDialog == null) {
+            usernameDialog = new CustomDialog(this, "User name", "Enter your name:", true);
+        }
+
+        usernameDialog.setVisible(true);
+
+
+        if (usernameDialog.getValidatedText() != null) {
+            userManager.createNewUser(usernameDialog.getValidatedText());
+            return userManager.getUser();
+        }
+        return null;
+    }
 }
