@@ -11,7 +11,6 @@ import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.objects.sound.SoundObject;
-import com.metel.goldman.objects.sound.WavPlayer;
 
 /**
  *
@@ -87,9 +86,11 @@ public class GoldMan extends AbstractMovingObject implements SoundObject {
     }
 
     @Override
-    public String getSoundName(ActionResult actionResult) {
+    public String getSoundPath(ActionResult actionResult) {
         switch (actionResult) {
-            case DIE: return WavPlayer.WAV_DIE;
+            case COLLECT_TREASURE: return "treasure.wav";
+            case DIE: return "die.wav";
+            case WIN: return "win.wav";
         }
         return null;
     }

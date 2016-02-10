@@ -12,6 +12,7 @@ import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.objects.GoldMan;
 import com.metel.goldman.objects.listeners.MoveResultListener;
+import com.metel.goldman.objects.sound.SoundPlayer;
 import com.metel.goldman.utils.MessageManager;
 
 import java.awt.event.ActionEvent;
@@ -26,6 +27,7 @@ import java.awt.event.KeyListener;
 public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener, MoveResultListener {
 
     private DrawableMap map; // передаем объект карты, которая умеет себя рисовать
+    private SoundPlayer soundPlayer;
 
     /**
      * Creates new form FrameGame
@@ -34,9 +36,12 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         initComponents();
     }
 
-    public void setMap(DrawableMap gameMap) {
+    public void setMap(DrawableMap gameMap, SoundPlayer soundPlayer) {
         this.map = gameMap;
         gameMap.drawMap();
+        
+        this.soundPlayer = soundPlayer;
+        this.soundPlayer.startBackgroundMusic("background.wav");
         
         gameMap.getGameMap().getGameCollection().addMoveListener(this); 
 
@@ -333,8 +338,8 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         closeFrame();
     }
     
-    private static final String DIE_MESSAGE="You lost the game!";
-    private static final String WIN_MESSAGE="You won! Your points:";
+    private static final String DIE_MESSAGE = "You lost the game!";
+    private static final String WIN_MESSAGE = "You won! Your points:";
 
     @Override
     public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
@@ -362,6 +367,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
 
             case WIN: {
                 gameFinished(WIN_MESSAGE + goldMan.getTotalScore());
+                soundPlayer.stopBackgoundMusic();
             }
             case COLLECT_TREASURE: {
                 jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
@@ -375,8 +381,15 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
 
             case DIE: {
                 gameFinished(DIE_MESSAGE);
+                soundPlayer.stopBackgoundMusic();
                 break;
             }
         }
+    }
+
+    @Override
+    protected void closeFrame() {
+        super.closeFrame();
+        soundPlayer.stopBackgoundMusic();
     }
 }

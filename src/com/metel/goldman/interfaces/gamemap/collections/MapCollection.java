@@ -17,6 +17,7 @@ import com.metel.goldman.objects.Nothing;
 import com.metel.goldman.objects.Wall;
 import com.metel.goldman.objects.listeners.MapListenersRegistrator;
 import com.metel.goldman.objects.listeners.MoveResultListener;
+import com.metel.goldman.objects.sound.WavPlayer;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -31,6 +32,10 @@ public class MapCollection extends MapListenersRegistrator {// объекты д
     private HashMap<Coordinate, AbstractGameObject> gameObjects = new HashMap<>();// хранит все объекты с доступом по координатам
     private EnumMap<GameObjectType, ArrayList<AbstractGameObject>> typeObjects = new EnumMap<>(GameObjectType.class); // хранит список объектов для каждого типа    
 
+    public MapCollection() {
+        addMoveListener(new WavPlayer());
+    }
+    
     @Override
     public List<AbstractGameObject> getAllGameObjects() {
         return new ArrayList(gameObjects.values());// ! узкое место - каждый раз создается новая коллекция
@@ -138,9 +143,9 @@ public class MapCollection extends MapListenersRegistrator {// объекты д
     }
 
     @Override
-    public void notifyMoveListeners(ActionResult actionResult, GoldMan goldMan) {
+    public void notifyMoveListeners(ActionResult actionResult, AbstractMovingObject movingObject) {
         for (MoveResultListener listener : getMoveListeners()) {
-            listener.notifyActionResult(actionResult, goldMan);
+            listener.notifyActionResult(actionResult, movingObject);
         }
     }
 }

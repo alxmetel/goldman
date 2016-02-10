@@ -36,7 +36,6 @@ public abstract class AbstractGameObject implements StaticObject {
     public ImageIcon getIcon() {
         return icon;
     }
-
     
     protected ImageIcon getImageIcon(String path){
         return new ImageIcon(getClass().getResource(path));

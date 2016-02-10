@@ -5,14 +5,16 @@
  */
 package com.metel.goldman.objects.sound;
 
-import com.metel.goldman.enums.ActionResult;
-
 /**
  *
  * @author Metel
  */
-public interface SoundObject {
+public interface SoundPlayer {
     
-    String getSoundPath(ActionResult actionResult);
+    void startBackgroundMusic(String soundName);
+
+    void stopBackgoundMusic();
+
+    void playSound(String name, final boolean loop);
     
 }

@@ -8,6 +8,7 @@ package com.metel.goldman.gui;
 import com.metel.goldman.enums.LocationType;
 import com.metel.goldman.interfaces.gamemap.collections.MapCollection;
 import com.metel.goldman.objects.gui.maps.JTableGameMap;
+import com.metel.goldman.objects.sound.WavPlayer;
 
 /**
  *
@@ -138,7 +139,7 @@ public class FrameMainMenu extends javax.swing.JFrame {
         if (frameGame == null){
             frameGame = new FrameGame();
         }
-        frameGame.setMap(new JTableGameMap(LocationType.FS, "game.map", new MapCollection()));
+        frameGame.setMap(new JTableGameMap(LocationType.FS, "game.map", new MapCollection()), new WavPlayer());
         frameGame.showFrame(this);
     }//GEN-LAST:event_jbtnNewGameActionPerformed
 

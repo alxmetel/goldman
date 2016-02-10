@@ -14,6 +14,7 @@ import com.metel.goldman.enums.LocationType;
 import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.movestrategies.AgressiveMoving;
+import com.metel.goldman.movestrategies.SlowMoving;
 import com.metel.goldman.objects.Coordinate;
 import com.metel.goldman.objects.Nothing;
 import com.metel.goldman.objects.Wall;
@@ -152,7 +153,7 @@ public class JTableGameMap implements DrawableMap {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            gameMap.getGameCollection().moveObject(new AgressiveMoving(), GameObjectType.MONSTER);
+            gameMap.getGameCollection().moveObject(new SlowMoving(), GameObjectType.MONSTER);
         }
 
         @Override

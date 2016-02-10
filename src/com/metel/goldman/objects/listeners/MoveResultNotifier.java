@@ -5,8 +5,8 @@
  */
 package com.metel.goldman.objects.listeners;
 
+import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
-import com.metel.goldman.objects.GoldMan;
 import java.util.List;
 
 /**
@@ -23,5 +23,5 @@ public interface MoveResultNotifier {
 
     public void removeAllLMoveisteners();
 
-    public void notifyMoveListeners(ActionResult actionResult, GoldMan goldMan);
+    public void notifyMoveListeners(ActionResult actionResult, AbstractMovingObject abstractMovingObject);
 }
