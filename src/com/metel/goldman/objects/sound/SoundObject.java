@@ -3,17 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.metel.goldman.objects.listeners;
+package com.metel.goldman.objects.sound;
 
-import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 
 /**
  *
  * @author Metel
  */
-public interface MoveResultListener {
+public interface SoundObject {
     
-    public void notifyActionResult(ActionResult actionResult, AbstractMovingObject abstractMovingObject);
+    String getSoundName(ActionResult actionResult);
     
 }

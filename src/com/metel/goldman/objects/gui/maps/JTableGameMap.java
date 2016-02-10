@@ -7,6 +7,7 @@ package com.metel.goldman.objects.gui.maps;
 
 import com.metel.goldman.abstracts.AbstractGameMap;
 import com.metel.goldman.abstracts.AbstractGameObject;
+import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.LocationType;
@@ -14,7 +15,6 @@ import com.metel.goldman.interfaces.gamemap.collections.GameCollection;
 import com.metel.goldman.interfaces.gamemap.DrawableMap;
 import com.metel.goldman.movestrategies.AgressiveMoving;
 import com.metel.goldman.objects.Coordinate;
-import com.metel.goldman.objects.GoldMan;
 import com.metel.goldman.objects.Nothing;
 import com.metel.goldman.objects.Wall;
 import com.metel.goldman.objects.creators.MapCreator;
@@ -101,10 +101,8 @@ public class JTableGameMap implements DrawableMap {
                 columnNames[i] = "";
             }
 
-
             // игровое поле будет отображаться в super без заголовков столбцов
             jTableMap.setModel(new DefaultTableModel(mapObjects, columnNames));
-
 
             // вместо текста в ячейках таблицы устанавливаем отображение картинки
             for (int i = 0; i < jTableMap.getColumnCount(); i++) {
@@ -116,8 +114,6 @@ public class JTableGameMap implements DrawableMap {
             e.printStackTrace();
             return false;
         }
-
-
         return true;
     }
 
@@ -160,7 +156,7 @@ public class JTableGameMap implements DrawableMap {
         }
 
         @Override
-        public void notifyActionResult(ActionResult actionResult, GoldMan goldMan) {
+        public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
             switch (actionResult){
                 case DIE: case WIN:{
                     timer.stop();
@@ -169,5 +165,4 @@ public class JTableGameMap implements DrawableMap {
             }
         }
     }
- 
 }

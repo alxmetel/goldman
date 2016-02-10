@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
@@ -336,10 +337,20 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
     private static final String WIN_MESSAGE="You won! Your points:";
 
     @Override
-    public void notifyActionResult(ActionResult actionResult, GoldMan goldMan) {
+    public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
 
+        if (movingObject.getType().equals(GameObjectType.GOLDMAN)) {
+            GoldMan goldMan = (GoldMan) movingObject;
+            checkGoldManActions(actionResult, goldMan);
+        }
+        checkCommonActions(actionResult);
+        map.drawMap();
+    }
+
+    private void checkGoldManActions(ActionResult actionResult, GoldMan goldMan) {
         switch (actionResult) {
             case MOVE: {
+
                 jlabelTurnsLeft.setText(String.valueOf(map.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
 
                 if (goldMan.getTurnsNumber() >= map.getGameMap().getTimeLimit()) {
@@ -349,21 +360,23 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
                 break;
             }
 
-            case DIE: {
-                gameFinished(DIE_MESSAGE);
-                break;
+            case WIN: {
+                gameFinished(WIN_MESSAGE + goldMan.getTotalScore());
             }
-            
-            case WIN:{
-                gameFinished(WIN_MESSAGE+goldMan.getTotalScore());
-            }
-
             case COLLECT_TREASURE: {
                 jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
                 break;
             }
         }
+    }
 
-        map.drawMap();
+    private void checkCommonActions(ActionResult actionResult) {
+        switch (actionResult) {
+
+            case DIE: {
+                gameFinished(DIE_MESSAGE);
+                break;
+            }
+        }
     }
 }

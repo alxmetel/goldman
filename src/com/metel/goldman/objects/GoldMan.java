@@ -10,6 +10,8 @@ import com.metel.goldman.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
+import com.metel.goldman.objects.sound.SoundObject;
+import com.metel.goldman.objects.sound.WavPlayer;
 
 /**
  *
@@ -17,7 +19,7 @@ import com.metel.goldman.enums.MovingDirection;
  * Класс отвечает за работу объекта GOLDMAN - главный персонаж игры
  */
 
-public class GoldMan extends AbstractMovingObject {
+public class GoldMan extends AbstractMovingObject implements SoundObject {
 
     private int totalScore = 0;// кол-во очков, собранных игроком
     private int turnsNumber = 0;// кол-во сделанных ходов
@@ -82,5 +84,13 @@ public class GoldMan extends AbstractMovingObject {
             }  
         }
         return super.doAction(gameObject);
+    }
+
+    @Override
+    public String getSoundName(ActionResult actionResult) {
+        switch (actionResult) {
+            case DIE: return WavPlayer.WAV_DIE;
+        }
+        return null;
     }
 }

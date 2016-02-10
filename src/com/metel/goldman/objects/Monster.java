@@ -7,8 +7,11 @@ package com.metel.goldman.objects;
 
 import com.metel.goldman.abstracts.AbstractGameObject;
 import com.metel.goldman.abstracts.AbstractMovingObject;
+import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
+import com.metel.goldman.objects.sound.SoundObject;
+import com.metel.goldman.objects.sound.WavPlayer;
 
 /**
  *
@@ -16,7 +19,7 @@ import com.metel.goldman.enums.MovingDirection;
  * Класс отвечает за работу объекта MONSTER
  */
 
-public class Monster extends AbstractMovingObject {
+public class Monster extends AbstractMovingObject implements SoundObject {
 
     public Monster(Coordinate coordinate) {
         super.setType(GameObjectType.MONSTER);
@@ -41,5 +44,28 @@ public class Monster extends AbstractMovingObject {
                 super.setIcon(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
                 break;
         }
+    }
+    
+    @Override
+    public ActionResult doAction(AbstractGameObject gameObject) {
+
+        switch (gameObject.getType()) {
+            case TREASURE:
+            case MONSTER: { // монстр не может наступать на сокровище и на других монстров
+                return ActionResult.NO_ACTION;
+            }
+            case GOLDMAN: {
+                return ActionResult.DIE;
+            }
+        }
+        return super.doAction(gameObject);
+    }
+
+    @Override
+    public String getSoundName(ActionResult actionResult) {
+        switch (actionResult) {
+            case DIE: return WavPlayer.WAV_DIE;
+        }
+        return null;
     }
 }
