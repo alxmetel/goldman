@@ -33,7 +33,6 @@ public class FSMapLoader extends AbstractMapLoader {
         super(gameMap);
     }
 
-
     @Override
     public boolean loadMap(MapInfo mapInfo) {
         File file = new File("game.map");
@@ -55,6 +54,7 @@ public class FSMapLoader extends AbstractMapLoader {
 
             // разбиваем первую строку на токены, разделенные запятой.            
             gameMap.getMapInfo().setMapName(strLine.split(",")[0]);
+            gameMap.getMapInfo().setId(1);
 
             gameMap.getMapInfo().setTurnsLimit(Integer.valueOf(strLine.split(",")[1]).intValue());
             gameMap.getMapInfo().setWidth(Integer.valueOf(strLine.split(",")[2]).intValue());
@@ -82,13 +82,8 @@ public class FSMapLoader extends AbstractMapLoader {
             Logger.getLogger(FSMapLoader.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
-
-
         return true;
-
     }
-
-  
 
     @Override
     public boolean saveMap(SavedMapInfo mapInfo) {
@@ -109,7 +104,6 @@ public class FSMapLoader extends AbstractMapLoader {
         } catch (IOException ex) {
             Logger.getLogger(FSMapLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         return false;
     }
 
@@ -132,9 +126,7 @@ public class FSMapLoader extends AbstractMapLoader {
                 Logger.getLogger(FSMapLoader.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-
         return lineCount;
-
     }
 
     @Override
@@ -146,7 +138,4 @@ public class FSMapLoader extends AbstractMapLoader {
     public boolean deleteSavedMap(MapInfo mapInfo) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-   
-   
 }

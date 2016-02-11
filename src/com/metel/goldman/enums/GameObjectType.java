@@ -15,6 +15,7 @@ import java.io.Serializable;
 
 public enum GameObjectType implements Serializable{
 
+    TREE (6),
     MONSTER(5),
     TREASURE(4),
     EXIT(3),

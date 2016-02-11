@@ -13,6 +13,7 @@ import com.metel.goldman.gameobjects.impl.GoldMan;
 import com.metel.goldman.gameobjects.impl.Monster;
 import com.metel.goldman.gameobjects.impl.Nothing;
 import com.metel.goldman.gameobjects.impl.Treasure;
+import com.metel.goldman.gameobjects.impl.Tree;
 import com.metel.goldman.gameobjects.impl.Wall;
 
 /**
@@ -58,10 +59,17 @@ public class GameObjectCreator {
                 obj = new Exit(coordinate);
                 break;
             }
+
             case GOLDMAN: {
                 obj = new GoldMan(coordinate);
                 break;
             }
+                
+            case TREE:{
+                obj = new Tree(coordinate);
+                break;
+            }
+
             default:
                 throw new IllegalArgumentException("Can't create object type: " + type);
         }

@@ -92,7 +92,12 @@ public class GoldMan extends AbstractSoundObject {
                 totalScore *= 2;
                 return ActionResult.WIN;
             }
+                
+            case TREE:{
+                return ActionResult.HIDE_IN_TREE;
+            }
         }
+
         return super.doAction(gameObject);
     }
 

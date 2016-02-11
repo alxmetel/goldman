@@ -12,6 +12,7 @@ package com.metel.goldman.enums;
  */
 public enum ActionResult {
 
+    HIDE_IN_TREE,// спрятаться в дереве
     NO_ACTION,// ничего не происходит
     DIE,// игрок умирает
     WIN,// игрок выиграл
