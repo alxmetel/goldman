@@ -5,13 +5,15 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.enums.LocationType;
-import com.metel.goldman.interfaces.gamemap.collections.MapCollection;
-import com.metel.goldman.objects.gui.maps.JTableGameMap;
-import com.metel.goldman.objects.sound.WavPlayer;
-import com.metel.goldman.user.AbstractUserManager;
-import com.metel.goldman.user.DbUserManager;
-import com.metel.goldman.user.User;
+import com.metel.goldman.gamemap.impl.JTableGameMap;
+import com.metel.goldman.gamemap.loader.abstracts.AbstractMapLoader;
+import com.metel.goldman.gamemap.loader.impl.DBMapLoader;
+import com.metel.goldman.objects.MapInfo;
+import com.metel.goldman.sound.impl.WavPlayer;
+import com.metel.goldman.objects.User;
+import com.metel.goldman.score.impl.DbScoreSaver;
+import com.metel.goldman.score.interfaces.ScoreSaver;
+import com.metel.goldman.sound.interfaces.SoundPlayer;
 
 /**
  *
@@ -20,11 +22,16 @@ import com.metel.goldman.user.User;
 public class FrameMainMenu extends javax.swing.JFrame {
 
     private FrameGame frameGame;
-    private FrameStat frameStat = new FrameStat();
-    private FrameSavedGames frameLoadGame = new FrameSavedGames();
-    private AbstractUserManager userManager = new DbUserManager();
-    private CustomDialog usernameDialog;
-    
+    private FrameStat frameStat;
+    private FrameSavedGames frameSavedGames;
+    private ScoreSaver scoreSaver = new DbScoreSaver();
+    private CustomDialog usernameDialog = new CustomDialog(this, "User name", "Enter your name:", true);;
+    private JTableGameMap gameMap = new JTableGameMap();
+    private AbstractMapLoader mapLoader = new DBMapLoader(gameMap);
+    private SoundPlayer soundPlayer = new WavPlayer();
+    private static final int MAP_LEVEL_ONE = 1;
+    private User user;
+
     /**
      * Creates new form FrameMainMenu
      */
@@ -141,19 +148,32 @@ public class FrameMainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnNewGameActionPerformed
-        if (createNewUser() == null) {
+        if (!saveUser()) {
             return;
         }
 
-        if (frameGame == null) {
-            frameGame = new FrameGame(userManager);
+        MapInfo mapInfo = new MapInfo();
+        mapInfo.setLevelId(MAP_LEVEL_ONE);
+
+        if (!mapLoader.loadMap(mapInfo)) {
+            return;
         }
-        frameGame.setMap(new JTableGameMap(LocationType.FS, "game.map", new MapCollection()), new WavPlayer());
+
+        createFrameGame();
 
         frameGame.showFrame(this);
     }//GEN-LAST:event_jbtnNewGameActionPerformed
-
+    private void createFrameGame() {
+        if (frameGame == null) {
+            frameGame = new FrameGame(scoreSaver, mapLoader, soundPlayer);
+        }
+    }
     private void jbtnStatisticsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnStatisticsActionPerformed
+        if (frameStat == null) {
+            frameStat = new FrameStat();
+        }
+
+        frameStat.setList(scoreSaver.getScoreList());
         frameStat.showFrame(this);
     }//GEN-LAST:event_jbtnStatisticsActionPerformed
 
@@ -162,7 +182,17 @@ public class FrameMainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jbtnExitActionPerformed
 
     private void jbtnLoadGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLoadGameActionPerformed
-        frameLoadGame.showFrame(this);
+        if (!saveUser()) {
+            return;
+        }
+
+        createFrameGame();
+
+        if (frameSavedGames == null) {
+            frameSavedGames = new FrameSavedGames(mapLoader, frameGame);
+        }
+
+        frameSavedGames.showFrame(this);
     }//GEN-LAST:event_jbtnLoadGameActionPerformed
 
     
@@ -217,19 +247,36 @@ public class FrameMainMenu extends javax.swing.JFrame {
     private javax.swing.JPanel jpnlMainMenu;
     // End of variables declaration//GEN-END:variables
 
-    private User createNewUser() {
+    private String getUserNameDialog() {
 
-        if (usernameDialog == null) {
-            usernameDialog = new CustomDialog(this, "User name", "Enter your name:", true);
+        if (user != null && user.getUsername() != null) {
+            usernameDialog.setUsername(user.getUsername());
         }
 
         usernameDialog.setVisible(true);
 
+        return usernameDialog.getValidatedText();
+    }
 
-        if (usernameDialog.getValidatedText() != null) {
-            userManager.createNewUser(usernameDialog.getValidatedText());
-            return userManager.getUser();
-        }
-        return null;
+    
+    private boolean saveUser() {// сохранить пользователя, получить его id
+
+        String username = getUserNameDialog();
+
+        if (username != null && !username.trim().equals("")) {
+            
+            if (user!=null && user.getUsername().equals(username)){// если ввел того же пользователя (т.е. ничего не менял)
+                return true;
+            }
+            
+            user = new User();
+            user.setUsername(username);
+            user.setId(mapLoader.getPlayerId(username));
+            
+            gameMap.getMapInfo().setUser(user);
+            
+            return true;
+        } 
+        return false;
     }
 }

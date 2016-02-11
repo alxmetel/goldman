@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @author Metel
  */
 public class NameValidator implements StringValidator{
-    
+
     // массив содержит все запрещенные имена (все буквы большие, потом будем имя приводить к заглавным буквам и сравнивать с элементами массива)
     private final static String[] notAllowNames = {"KING", "LADY", "LORD", "QUEEN", "SIR"};// нужно записать элементы в алфавитном порядке, чтобы binarySearch работал, без сортировки binarySearch не будет работать  
     // массив содержит все римские цифры

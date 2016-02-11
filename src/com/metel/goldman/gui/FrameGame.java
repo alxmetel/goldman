@@ -5,52 +5,73 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.abstracts.AbstractMovingObject;
+import com.metel.goldman.gameobjects.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.interfaces.gamemap.TimeMap;
-import com.metel.goldman.objects.GoldMan;
-import com.metel.goldman.objects.listeners.MoveResultListener;
-import com.metel.goldman.objects.sound.SoundPlayer;
-import com.metel.goldman.user.AbstractUserManager;
+import com.metel.goldman.gamemap.abstracts.AbstractGameMap;
+import com.metel.goldman.gamemap.loader.abstracts.AbstractMapLoader;
+import com.metel.goldman.gameobjects.impl.GoldMan;
+import com.metel.goldman.listeners.interfaces.MoveResultListener;
+import com.metel.goldman.objects.MapInfo;
+import com.metel.goldman.objects.SavedMapInfo;
+import com.metel.goldman.objects.UserScore;
+import com.metel.goldman.score.interfaces.ScoreSaver;
+import com.metel.goldman.sound.impl.WavPlayer;
+import com.metel.goldman.sound.interfaces.SoundPlayer;
 import com.metel.goldman.utils.MessageManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Metel
  */
-public class FrameGame extends BaseChildFrame implements ActionListener, KeyListener, MoveResultListener {
+public class FrameGame extends ConfirmCloseFrame implements ActionListener, MoveResultListener {
 
-    private TimeMap map; // передаем объект карты, которая умеет себя рисовать
+    private AbstractMapLoader mapLoader;
     private SoundPlayer soundPlayer;
-    private AbstractUserManager userManager;
+    private ScoreSaver scoreSaver;
+    private MapInfo mapInfo;
+    private AbstractGameMap gameMap;
 
     /**
      * Creates new form FrameGame
      */
-    public FrameGame(AbstractUserManager userManager) {
-        this.userManager = userManager;
+    public FrameGame(ScoreSaver scoreSaver, AbstractMapLoader mapLoader, SoundPlayer soundPlayer) {
+        this.mapLoader = mapLoader;
+        this.scoreSaver = scoreSaver;
+        this.soundPlayer = soundPlayer;
         initComponents();
     }
 
-    public void setMap(TimeMap gameMap, SoundPlayer soundPlayer) {
-        this.map = gameMap;
-        gameMap.drawMap();
-        
-        this.soundPlayer = soundPlayer;
-        this.soundPlayer.startBackgroundMusic("background.wav");
-        
-        gameMap.getGameMap().getGameCollection().addMoveListener(this); 
+    private void initMap() {
 
-        jlabelTurnsLeft.setText(String.valueOf(gameMap.getGameMap().getTimeLimit()));
+        gameMap = mapLoader.getGameMap();
+
+        gameMap.drawMap();
+
+
+        // слушатели для звуков должны идти в первую очередь, т.к. они запускаются в отдельном потоке и не мешают выполняться следующим слушателям
+        if (soundPlayer instanceof MoveResultListener) {
+            mapLoader.getGameMap().getGameCollection().addMoveListener((MoveResultListener) soundPlayer);
+        }
+
+        gameMap.getGameCollection().addMoveListener(this);
+
         jPanelMap.removeAll();
-        jPanelMap.add(gameMap.getMapComponent());
+        jPanelMap.add(mapLoader.getGameMap().getMapComponent());
+
+        mapInfo = gameMap.getMapInfo();
+
+        jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
+        jlabelScore.setText(String.valueOf(getTotalScore()));
+
+        startGame();
     }
 
     /**
@@ -91,7 +112,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         jPanelMap.setLayout(jPanelMapLayout);
         jPanelMapLayout.setHorizontalGroup(
             jPanelMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 296, Short.MAX_VALUE)
+            .addGap(0, 304, Short.MAX_VALUE)
         );
         jPanelMapLayout.setVerticalGroup(
             jPanelMapLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,9 +235,9 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanelMap, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
+                .addComponent(jPanelMap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(10, 10, 10)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -225,7 +246,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelMap, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(jPanelMap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
@@ -252,7 +273,9 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,7 +284,7 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
-        setSize(new java.awt.Dimension(479, 404));
+        setSize(new java.awt.Dimension(490, 404));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -317,63 +340,54 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    @Override
-    public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
     private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
-        map.getGameMap().getGameCollection().moveObject(movingDirection, gameObjectType);
+        gameMap.getGameCollection().moveObject(movingDirection, gameObjectType);
     }
 
     private void gameFinished(String message) {
+        stopGame();
         MessageManager.showInformMessage(null, message);
         closeFrame();
     }
-    
-    private static final String DIE_MESSAGE = "You lost the game!";
-    private static final String WIN_MESSAGE = "You won! Your points:";
+    private static final String DIE_MESSAGE = "You lost!";
+    private static final String WIN_MESSAGE = "You won! Your score:";
+
+
+    @Override
+    protected void showFrame(JFrame parent) {
+        initMap();
+        super.showFrame(parent);
+    }
 
     @Override
     public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
 
         if (movingObject.getType().equals(GameObjectType.GOLDMAN)) {
-            GoldMan goldMan = (GoldMan) movingObject;
-            checkGoldManActions(actionResult, goldMan);
+            checkGoldManActions(actionResult);
         }
         checkCommonActions(actionResult);
-        map.drawMap();
+        gameMap.drawMap();
     }
 
-    private void checkGoldManActions(ActionResult actionResult, GoldMan goldMan) {
+    private void checkGoldManActions(ActionResult actionResult) {
         switch (actionResult) {
             case MOVE: {
 
-                jlabelTurnsLeft.setText(String.valueOf(map.getGameMap().getTimeLimit() - goldMan.getTurnsNumber()));
+                jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
 
-                if (goldMan.getTurnsNumber() >= map.getGameMap().getTimeLimit()) {
+                if (getTurnsLeftCount() == 0) {
                     gameFinished(DIE_MESSAGE);
                 }
-
                 break;
             }
 
             case WIN: {
-                gameFinished(WIN_MESSAGE + goldMan.getTotalScore());
-                soundPlayer.stopBackgoundMusic();
+                gameFinished(WIN_MESSAGE + getGoldMan().getTotalScore());
+                saveScore();
             }
             case COLLECT_TREASURE: {
-                jlabelScore.setText(String.valueOf(goldMan.getTotalScore()));
+                jlabelScore.setText(String.valueOf(getGoldMan().getTotalScore()));
+                jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
                 break;
             }
         }
@@ -383,17 +397,79 @@ public class FrameGame extends BaseChildFrame implements ActionListener, KeyList
         switch (actionResult) {
 
             case DIE: {
-                soundPlayer.stopBackgoundMusic();
                 gameFinished(DIE_MESSAGE);
                 break;
             }
         }
     }
 
+    private void saveScore() {
+        UserScore userScore = new UserScore();
+        userScore.setUser(mapInfo.getUser());
+        userScore.setScore(getGoldMan().getTotalScore());
+        scoreSaver.saveScore(userScore);
+    }
+
+    private void saveMap() {
+        SavedMapInfo saveMapInfo = new SavedMapInfo();
+        saveMapInfo.setId(mapInfo.getId());
+        saveMapInfo.setUser(mapInfo.getUser());
+        saveMapInfo.setTotalScore(getGoldMan().getTotalScore());
+        saveMapInfo.setTurnsCount(getGoldMan().getTurnsNumber());
+        mapLoader.saveMap(saveMapInfo);
+    }
+
+    private int getTurnsLeftCount() {
+        return mapInfo.getTurnsLimit() - getGoldMan().getTurnsNumber();
+    }
+
+    private int getTotalScore() {
+        return getGoldMan().getTotalScore();
+    }
+
+    private GoldMan getGoldMan() {
+        return (GoldMan) mapLoader.getGameMap().getGameCollection().getGameObjects(GameObjectType.GOLDMAN).get(0);
+    }
+
+    @Override
+    protected boolean acceptCloseAction() {
+
+        mapLoader.getGameMap().stop();
+
+
+        int result = MessageManager.showYesNoCancelMessage(this, "Save game before quit?");
+        switch (result) {
+            case JOptionPane.YES_OPTION: {
+
+                saveMap();
+
+                break;
+            }
+            case JOptionPane.NO_OPTION: {
+                closeFrame();
+                break;
+            }
+            case JOptionPane.CANCEL_OPTION: {
+                mapLoader.getGameMap().start();
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void stopGame() {
+        soundPlayer.stopBackgoundMusic();
+        mapLoader.getGameMap().stop();
+    }
+
+    private void startGame() {
+        soundPlayer.startBackgroundMusic(WavPlayer.SOUND_BACKGROUND);
+        mapLoader.getGameMap().start();
+    }
+
     @Override
     protected void closeFrame() {
+        stopGame();
         super.closeFrame();
-        soundPlayer.stopBackgoundMusic();
-        map.stop();
     }
 }

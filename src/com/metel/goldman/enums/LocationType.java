@@ -10,7 +10,6 @@ package com.metel.goldman.enums;
  * @author Metel
  */
 public enum LocationType {
-    
    DB,
    FS
 }

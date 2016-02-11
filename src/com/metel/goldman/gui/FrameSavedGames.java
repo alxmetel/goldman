@@ -5,17 +5,30 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.gamemap.loader.abstracts.AbstractMapLoader;
+import com.metel.goldman.models.SaveGameTableModel;
+import com.metel.goldman.objects.MapInfo;
+import com.metel.goldman.objects.SavedMapInfo;
+import com.metel.goldman.utils.MessageManager;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Metel
  */
 public class FrameSavedGames extends BaseChildFrame {
 
-    /**
-     * Creates new form FrameSavedGames
-     */
-    public FrameSavedGames() {
+    private AbstractMapLoader mapLoader;
+    private SaveGameTableModel model;
+    private FrameGame frameGame;
+    private ArrayList<SavedMapInfo> list;
+
+    public FrameSavedGames(AbstractMapLoader mapLoader, FrameGame frameGame) {
         initComponents();
+        this.mapLoader = mapLoader;
+        this.frameGame = frameGame;
     }
 
     /**
@@ -28,14 +41,14 @@ public class FrameSavedGames extends BaseChildFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTableGames = new javax.swing.JTable();
+        jTableSaves = new javax.swing.JTable();
         jbtnReturn = new javax.swing.JButton();
         jbtnDelete = new javax.swing.JButton();
         jbtnLoadGame = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jTableGames.setModel(new javax.swing.table.DefaultTableModel(
+        jTableSaves.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -46,7 +59,7 @@ public class FrameSavedGames extends BaseChildFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTableGames);
+        jScrollPane1.setViewportView(jTableSaves);
 
         jbtnReturn.setText("<< Back");
         jbtnReturn.addActionListener(new java.awt.event.ActionListener() {
@@ -111,7 +124,19 @@ public class FrameSavedGames extends BaseChildFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnLoadGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLoadGameActionPerformed
-        // TODO add your handling code here:
+        int index = jTableSaves.getSelectedRow();
+
+        if (index < 0) {
+            return;
+        }
+
+        MapInfo mapInfo = model.getMapInfo(index);
+
+        mapLoader.loadMap(mapInfo);
+
+        closeFrame();
+
+        frameGame.showFrame(getParentFrame());                             
     }//GEN-LAST:event_jbtnLoadGameActionPerformed
 
     private void jbtnReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnReturnActionPerformed
@@ -119,15 +144,53 @@ public class FrameSavedGames extends BaseChildFrame {
     }//GEN-LAST:event_jbtnReturnActionPerformed
 
     private void jbtnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDeleteActionPerformed
-        // TODO add your handling code here:
+        int index = jTableSaves.getSelectedRow();
+
+        if (index < 0) {
+            return;
+        }
+
+        int result = MessageManager.showYesNoMessage(this, "Confirm removing?");
+        switch (result) {
+            case JOptionPane.YES_OPTION: {
+
+                MapInfo mapInfo = model.getMapInfo(index);
+
+                mapLoader.deleteSavedMap(mapInfo);
+
+                model.deleteMapInfo(index);
+                model.refresh();
+                break;
+            }
+            case JOptionPane.NO_OPTION:
+            case JOptionPane.CANCEL_OPTION:
+        }
     }//GEN-LAST:event_jbtnDeleteActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTableGames;
+    private javax.swing.JTable jTableSaves;
     private javax.swing.JButton jbtnDelete;
     private javax.swing.JButton jbtnLoadGame;
     private javax.swing.JButton jbtnReturn;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    protected void showFrame(JFrame parent) {
+
+        list = mapLoader.getSavedMapList(mapLoader.getGameMap().getMapInfo().getUser());
+
+        model = new SaveGameTableModel(list);
+
+        jTableSaves.setModel(model);
+
+        jTableSaves.setRowHeight(40);
+
+        super.showFrame(parent);
+
+        if (list.isEmpty()) {
+            MessageManager.showErrorMessage(this, "No saved games!");
+        }
+    }
 }

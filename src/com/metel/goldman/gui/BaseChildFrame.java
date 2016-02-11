@@ -44,5 +44,5 @@ public abstract class BaseChildFrame extends JFrame {
                 closeFrame();
             }
         });
-    }   
+    }
 }

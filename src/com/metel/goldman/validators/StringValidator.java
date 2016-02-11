@@ -10,7 +10,7 @@ package com.metel.goldman.validators;
  * @author Metel
  */
 public interface StringValidator {
-    
+
     boolean isValid(String text);
-    
+
 }

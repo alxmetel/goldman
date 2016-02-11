@@ -5,7 +5,12 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.models.ScoreTableModel;
+import com.metel.goldman.objects.UserScore;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import javax.swing.JFrame;
 
 /**
  *
@@ -13,11 +18,17 @@ import java.awt.event.ActionListener;
  */
 public class FrameStat extends BaseChildFrame implements ActionListener {
 
+    private ArrayList<UserScore> list;
+
     /**
      * Creates new form FrameStat
      */
     public FrameStat() {
         initComponents();
+    }
+
+    public void setList(ArrayList<UserScore> list) {
+        this.list = list;
     }
 
     /**
@@ -29,16 +40,16 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        jbtnBack = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableStat = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jButton1.setText("<< Main Menu");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jbtnBack.setText("<< Main Menu");
+        jbtnBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jbtnBackActionPerformed(evt);
             }
         });
 
@@ -63,7 +74,7 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(jbtnBack)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 621, Short.MAX_VALUE))
                 .addContainerGap())
@@ -72,7 +83,7 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1)
+                .addComponent(jbtnBack)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -82,23 +93,28 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jbtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnBackActionPerformed
         closeFrame();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    
+    }//GEN-LAST:event_jbtnBackActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTableStat;
+    private javax.swing.JButton jbtnBack;
     // End of variables declaration//GEN-END:variables
     
     @Override
-    public void actionPerformed(java.awt.event.ActionEvent evt) {
-        if (evt.getSource() == jButton1) {
-            FrameStat.this.jButton1ActionPerformed(evt);
-        }
+    public void actionPerformed(ActionEvent e) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    protected void showFrame(JFrame parent) {
+
+        jTableStat.setModel(new ScoreTableModel(list));
+
+        jTableStat.setRowHeight(40);
+
+        super.showFrame(parent);
+    }
 }
