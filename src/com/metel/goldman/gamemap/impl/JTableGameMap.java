@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.gamemap.impl;
 
+import com.metel.goldman.collections.interfaces.GameCollection;
 import com.metel.goldman.gamemap.abstracts.AbstractGameMap;
 import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
@@ -36,7 +37,8 @@ public class JTableGameMap extends AbstractGameMap implements TimeMap {
     private transient AbstractGameObject[][] mapObjects;
     private transient TimeMover timeMover = new TimeMover();
 
-    public JTableGameMap() {
+    public JTableGameMap(GameCollection gameCollection) {
+        super(gameCollection);
 
         try {
             jTableMap.setEnabled(false);

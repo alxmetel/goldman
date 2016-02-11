@@ -20,8 +20,6 @@ import javax.sound.sampled.Clip;
 
 public class Monster extends AbstractSoundObject{
 
-    private transient Clip clip;
-
     public Monster(Coordinate coordinate) {
         super.setType(GameObjectType.MONSTER);
         super.setCoordinate(coordinate);

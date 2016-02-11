@@ -5,7 +5,8 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.gamemap.loader.abstracts.AbstractMapLoader;
+import com.metel.goldman.enums.LocationType;
+import com.metel.goldman.gamemap.adapters.HybridMapLoader;
 import com.metel.goldman.models.SaveGameTableModel;
 import com.metel.goldman.objects.MapInfo;
 import com.metel.goldman.objects.SavedMapInfo;
@@ -20,12 +21,12 @@ import javax.swing.JOptionPane;
  */
 public class FrameSavedGames extends BaseChildFrame {
 
-    private AbstractMapLoader mapLoader;
+    private HybridMapLoader mapLoader;
     private SaveGameTableModel model;
     private FrameGame frameGame;
     private ArrayList<SavedMapInfo> list;
 
-    public FrameSavedGames(AbstractMapLoader mapLoader, FrameGame frameGame) {
+    public FrameSavedGames(HybridMapLoader mapLoader, FrameGame frameGame) {
         initComponents();
         this.mapLoader = mapLoader;
         this.frameGame = frameGame;
@@ -132,7 +133,7 @@ public class FrameSavedGames extends BaseChildFrame {
 
         MapInfo mapInfo = model.getMapInfo(index);
 
-        mapLoader.loadMap(mapInfo);
+        mapLoader.loadMap(mapInfo, LocationType.DB);
 
         closeFrame();
 
@@ -156,7 +157,7 @@ public class FrameSavedGames extends BaseChildFrame {
 
                 MapInfo mapInfo = model.getMapInfo(index);
 
-                mapLoader.deleteSavedMap(mapInfo);
+                mapLoader.deleteSavedMap(mapInfo,LocationType.DB);
 
                 model.deleteMapInfo(index);
                 model.refresh();
@@ -179,7 +180,7 @@ public class FrameSavedGames extends BaseChildFrame {
     @Override
     protected void showFrame(JFrame parent) {
 
-        list = mapLoader.getSavedMapList(mapLoader.getGameMap().getMapInfo().getUser());
+        list = mapLoader.getSavedMapList(mapLoader.getGameMap().getMapInfo().getUser(), LocationType.DB);
 
         model = new SaveGameTableModel(list);
 

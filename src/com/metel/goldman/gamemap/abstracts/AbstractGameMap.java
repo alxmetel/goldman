@@ -31,6 +31,7 @@ public abstract class AbstractGameMap implements TimeMap, Serializable {
         this.gameCollection = gameCollection;
     }
 
+    @Override
     public MapInfo getMapInfo() {
         return mapInfo;
     }

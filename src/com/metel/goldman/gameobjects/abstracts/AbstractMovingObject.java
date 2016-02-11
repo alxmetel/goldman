@@ -18,7 +18,7 @@ import java.io.Serializable;
  * AbstractGameObject с добавлением функций движения
  */
 
-public abstract class AbstractMovingObject extends AbstractGameObject implements MovingObject, Serializable {
+public abstract class AbstractMovingObject extends AbstractGameObject implements MovingObject {
 
     public abstract void changeIcon(MovingDirection direction);
     private int step = 1;// по-умолчанию у всех объектов шаг равен 1

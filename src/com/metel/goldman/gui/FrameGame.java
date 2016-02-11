@@ -9,23 +9,15 @@ import com.metel.goldman.gameobjects.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
-import com.metel.goldman.gamemap.abstracts.AbstractGameMap;
-import com.metel.goldman.gamemap.loader.abstracts.AbstractMapLoader;
-import com.metel.goldman.gameobjects.impl.GoldMan;
+import com.metel.goldman.gamemap.facades.GameFacade;
 import com.metel.goldman.listeners.interfaces.MoveResultListener;
-import com.metel.goldman.objects.MapInfo;
-import com.metel.goldman.objects.SavedMapInfo;
-import com.metel.goldman.objects.UserScore;
-import com.metel.goldman.score.interfaces.ScoreSaver;
-import com.metel.goldman.sound.impl.WavPlayer;
-import com.metel.goldman.sound.interfaces.SoundPlayer;
 import com.metel.goldman.utils.MessageManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
@@ -33,45 +25,20 @@ import javax.swing.JOptionPane;
  */
 public class FrameGame extends ConfirmCloseFrame implements ActionListener, MoveResultListener {
 
-    private AbstractMapLoader mapLoader;
-    private SoundPlayer soundPlayer;
-    private ScoreSaver scoreSaver;
-    private MapInfo mapInfo;
-    private AbstractGameMap gameMap;
+    private static final String MESSAGE_SAVE = "Save game before exit?";
+    private static final String MESSAGE_SAVED_SUCCESS = "The game is saved!";
+    private static final String MESSAGE_DIE = "You lost!";
+    private static final String MESSAGE_WIN = "You won! Your score is:";
+    
+    private GameFacade gameFacade;
 
     /**
      * Creates new form FrameGame
      */
-    public FrameGame(ScoreSaver scoreSaver, AbstractMapLoader mapLoader, SoundPlayer soundPlayer) {
-        this.mapLoader = mapLoader;
-        this.scoreSaver = scoreSaver;
-        this.soundPlayer = soundPlayer;
+    
+    public FrameGame(GameFacade resultFacade) {
+        this.gameFacade = resultFacade;
         initComponents();
-    }
-
-    private void initMap() {
-
-        gameMap = mapLoader.getGameMap();
-
-        gameMap.drawMap();
-
-
-        // слушатели для звуков должны идти в первую очередь, т.к. они запускаются в отдельном потоке и не мешают выполняться следующим слушателям
-        if (soundPlayer instanceof MoveResultListener) {
-            mapLoader.getGameMap().getGameCollection().addMoveListener((MoveResultListener) soundPlayer);
-        }
-
-        gameMap.getGameCollection().addMoveListener(this);
-
-        jPanelMap.removeAll();
-        jPanelMap.add(mapLoader.getGameMap().getMapComponent());
-
-        mapInfo = gameMap.getMapInfo();
-
-        jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
-        jlabelScore.setText(String.valueOf(getTotalScore()));
-
-        startGame();
     }
 
     /**
@@ -289,27 +256,28 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbtnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnSaveActionPerformed
-        // TODO add your handling code here:
+        gameFacade.saveMap();
+        closeFrame(MESSAGE_SAVED_SUCCESS);
     }//GEN-LAST:event_jbtnSaveActionPerformed
 
     private void jbtnDownActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnDownActionPerformed
-        moveObject(MovingDirection.DOWN, GameObjectType.GOLDMAN);
+        gameFacade.moveObject(MovingDirection.DOWN, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnDownActionPerformed
 
     private void jbtnRightActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnRightActionPerformed
-        moveObject(MovingDirection.RIGHT, GameObjectType.GOLDMAN);
+        gameFacade.moveObject(MovingDirection.RIGHT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnRightActionPerformed
 
     private void jbtnLeftActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnLeftActionPerformed
-        moveObject(MovingDirection.LEFT, GameObjectType.GOLDMAN);
+        gameFacade.moveObject(MovingDirection.LEFT, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnLeftActionPerformed
 
     private void jbtnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnExitActionPerformed
-        // TODO add your handling code here:
+        closeFrame();
     }//GEN-LAST:event_jbtnExitActionPerformed
 
     private void jbtnUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbtnUpActionPerformed
-        moveObject(MovingDirection.UP, GameObjectType.GOLDMAN);
+        gameFacade.moveObject(MovingDirection.UP, GameObjectType.GOLDMAN);
     }//GEN-LAST:event_jbtnUpActionPerformed
 
     
@@ -340,54 +308,57 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
-    private void moveObject(MovingDirection movingDirection, GameObjectType gameObjectType) {
-        gameMap.getGameCollection().moveObject(movingDirection, gameObjectType);
-    }
-
-    private void gameFinished(String message) {
-        stopGame();
-        MessageManager.showInformMessage(null, message);
-        closeFrame();
-    }
-    private static final String DIE_MESSAGE = "You lost!";
-    private static final String WIN_MESSAGE = "You won! Your score:";
-
-
     @Override
     protected void showFrame(JFrame parent) {
         initMap();
         super.showFrame(parent);
     }
+    
+    private void initMap() {
+        gameFacade.addMoveListener(this);
 
+        jPanelMap.removeAll();
+        jPanelMap.add(gameFacade.getMap());
+
+        jlabelTurnsLeft.setText(String.valueOf(gameFacade.getTurnsLeftCount()));
+        jlabelScore.setText(String.valueOf(gameFacade.getTotalScore()));
+
+        gameFacade.startGame();
+    }
+    
     @Override
     public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
 
         if (movingObject.getType().equals(GameObjectType.GOLDMAN)) {
             checkGoldManActions(actionResult);
         }
+        
         checkCommonActions(actionResult);
-        gameMap.drawMap();
+
+        gameFacade.updateMap();
     }
 
     private void checkGoldManActions(ActionResult actionResult) {
         switch (actionResult) {
             case MOVE: {
 
-                jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
+                jlabelTurnsLeft.setText(String.valueOf(gameFacade.getTurnsLeftCount()));
 
-                if (getTurnsLeftCount() == 0) {
-                    gameFinished(DIE_MESSAGE);
+                if (gameFacade.getTurnsLeftCount() == 0) {
+                    closeFrame(MESSAGE_DIE);
                 }
                 break;
             }
 
             case WIN: {
-                gameFinished(WIN_MESSAGE + getGoldMan().getTotalScore());
-                saveScore();
+                closeFrame(MESSAGE_WIN + gameFacade.getTotalScore());
+                gameFacade.saveScore();
             }
+
+
             case COLLECT_TREASURE: {
-                jlabelScore.setText(String.valueOf(getGoldMan().getTotalScore()));
-                jlabelTurnsLeft.setText(String.valueOf(getTurnsLeftCount()));
+                jlabelScore.setText(String.valueOf(gameFacade.getTotalScore()));
+                jlabelTurnsLeft.setText(String.valueOf(gameFacade.getTurnsLeftCount()));
                 break;
             }
         }
@@ -397,52 +368,23 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
         switch (actionResult) {
 
             case DIE: {
-                gameFinished(DIE_MESSAGE);
+                closeFrame(MESSAGE_DIE);
                 break;
             }
         }
     }
 
-    private void saveScore() {
-        UserScore userScore = new UserScore();
-        userScore.setUser(mapInfo.getUser());
-        userScore.setScore(getGoldMan().getTotalScore());
-        scoreSaver.saveScore(userScore);
-    }
-
-    private void saveMap() {
-        SavedMapInfo saveMapInfo = new SavedMapInfo();
-        saveMapInfo.setId(mapInfo.getId());
-        saveMapInfo.setUser(mapInfo.getUser());
-        saveMapInfo.setTotalScore(getGoldMan().getTotalScore());
-        saveMapInfo.setTurnsCount(getGoldMan().getTurnsNumber());
-        mapLoader.saveMap(saveMapInfo);
-    }
-
-    private int getTurnsLeftCount() {
-        return mapInfo.getTurnsLimit() - getGoldMan().getTurnsNumber();
-    }
-
-    private int getTotalScore() {
-        return getGoldMan().getTotalScore();
-    }
-
-    private GoldMan getGoldMan() {
-        return (GoldMan) mapLoader.getGameMap().getGameCollection().getGameObjects(GameObjectType.GOLDMAN).get(0);
-    }
-
     @Override
     protected boolean acceptCloseAction() {
 
-        mapLoader.getGameMap().stop();
+        gameFacade.stopGame();
 
 
-        int result = MessageManager.showYesNoCancelMessage(this, "Save game before quit?");
+        int result = MessageManager.showYesNoCancelMessage(this, MESSAGE_SAVE);
         switch (result) {
             case JOptionPane.YES_OPTION: {
-
-                saveMap();
-
+                gameFacade.saveMap();
+                MessageManager.showInformMessage(this, MESSAGE_SAVED_SUCCESS);
                 break;
             }
             case JOptionPane.NO_OPTION: {
@@ -450,26 +392,27 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
                 break;
             }
             case JOptionPane.CANCEL_OPTION: {
-                mapLoader.getGameMap().start();
+                gameFacade.startGame();
                 return false;
             }
         }
         return true;
     }
 
-    private void stopGame() {
-        soundPlayer.stopBackgoundMusic();
-        mapLoader.getGameMap().stop();
-    }
-
-    private void startGame() {
-        soundPlayer.startBackgroundMusic(WavPlayer.SOUND_BACKGROUND);
-        mapLoader.getGameMap().start();
-    }
-
     @Override
     protected void closeFrame() {
-        stopGame();
+        gameFacade.stopGame();
         super.closeFrame();
+    }
+
+    private void closeFrame(final String message) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                MessageManager.showInformMessage(null, message);
+            }
+        });
+
+        closeFrame();
     }
 }
