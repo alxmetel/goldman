@@ -10,6 +10,8 @@ import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.gameobjects.interfaces.MovingObject;
 import com.metel.goldman.gameobjects.impl.Coordinate;
 import java.io.Serializable;
+import java.util.EnumMap;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -20,8 +22,9 @@ import java.io.Serializable;
 
 public abstract class AbstractMovingObject extends AbstractGameObject implements MovingObject {
 
-    public abstract void changeIcon(MovingDirection direction);
     private int step = 1;// по-умолчанию у всех объектов шаг равен 1
+    
+    protected EnumMap<MovingDirection, ImageIcon> movingImages = new EnumMap<>(MovingDirection.class);
 
     @Override
     public int getStep() {
@@ -90,5 +93,9 @@ public abstract class AbstractMovingObject extends AbstractGameObject implements
             }
         }
         return newCoordinate;
+    }
+    
+    public void changeIcon(MovingDirection direction) {
+        super.setIcon(movingImages.get(direction));        
     }
 }

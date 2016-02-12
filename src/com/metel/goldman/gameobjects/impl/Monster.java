@@ -19,29 +19,18 @@ import javax.sound.sampled.Clip;
  */
 
 public class Monster extends AbstractSoundObject{
+    
+    private transient Clip clip;
 
     public Monster(Coordinate coordinate) {
         super.setType(GameObjectType.MONSTER);
         super.setCoordinate(coordinate);
-        super.setIcon(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
-    }
+        super.setIcon(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
 
-    @Override
-    public void changeIcon(MovingDirection direction) {
-        switch (direction) {
-            case DOWN:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_down.jpg"));
-                break;
-            case LEFT:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
-                break;
-            case RIGHT:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
-                break;
-            case UP:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
-                break;
-        }
+        movingImages.put(MovingDirection.UP, getImageIcon("/com/metel/goldman/images/monster_up.jpg"));
+        movingImages.put(MovingDirection.DOWN, getImageIcon("/com/metel/goldman/images/monster_down.jpg"));
+        movingImages.put(MovingDirection.LEFT, getImageIcon("/com/metel/goldman/images/monster_left.jpg"));
+        movingImages.put(MovingDirection.RIGHT, getImageIcon("/com/metel/goldman/images/monster_right.jpg"));
     }
 
     @Override
@@ -51,8 +40,7 @@ public class Monster extends AbstractSoundObject{
        
             case TREASURE:
             case MONSTER:
-            case TREE:
-            { // монстр не может наступать на сокровище, дерево и на других монстров
+            case TREE: { // монстр не может наступать на сокровище, дерево и на других монстров
                 return ActionResult.NO_ACTION;
             }
             case GOLDMAN: {

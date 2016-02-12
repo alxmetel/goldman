@@ -16,6 +16,15 @@ import com.metel.goldman.objects.User;
 import com.metel.goldman.score.impl.DbScoreSaver;
 import com.metel.goldman.score.interfaces.ScoreSaver;
 import com.metel.goldman.sound.interfaces.SoundPlayer;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -23,6 +32,7 @@ import com.metel.goldman.sound.interfaces.SoundPlayer;
  */
 public class FrameMainMenu extends javax.swing.JFrame {
 
+    private JDialog splashDialog;
     private FrameGame frameGame;
     private FrameStat frameStat;
     private FrameSavedGames frameSavedGames;
@@ -155,17 +165,37 @@ public class FrameMainMenu extends javax.swing.JFrame {
             return;
         }
 
-        MapInfo mapInfo = new MapInfo();
-        mapInfo.setLevelId(MAP_LEVEL_ONE);
 
-        if (!mapLoader.loadMap(mapInfo, LocationType.FS)) {
-            return;
-        }
-        gameFacade.setMapLoader(mapLoader);
+        showSplash();
+        SwingWorker<Void, Integer> worker = new SwingWorker<Void, Integer>() {
+            @Override
+            protected Void doInBackground() throws Exception {
 
-        createFrameGame();
+                MapInfo mapInfo = new MapInfo();
+                mapInfo.setLevelId(MAP_LEVEL_ONE);
 
-        frameGame.showFrame(this);
+                if (!mapLoader.loadMap(mapInfo, LocationType.FS)) {
+                    throw new Exception("Error loading map!");
+                }
+
+                gameFacade.setMapLoader(mapLoader);
+
+                createFrameGame();
+
+                Thread.sleep(1000);
+                return null;
+            }
+
+            @Override
+            protected void process(List<Integer> chunks) {}
+
+            @Override
+            protected void done() {
+                hideSplash();
+                FrameMainMenu.this.frameGame.showFrame(FrameMainMenu.this);
+            }
+        };
+        worker.execute();
     }//GEN-LAST:event_jbtnNewGameActionPerformed
     private void createFrameGame() {
         if (frameGame == null) {
@@ -280,5 +310,37 @@ public class FrameMainMenu extends javax.swing.JFrame {
             return true;
         }
         return false;
+    }
+    
+    private void hideSplash() {
+        splashDialog.setVisible(false);
+        splashDialog.getParent().setEnabled(true);
+    }
+
+    public void showSplash() {
+
+        if (splashDialog == null) {
+            splashDialog = new JDialog(FrameMainMenu.this);
+
+            splashDialog.setSize(200, 100);
+            splashDialog.setUndecorated(true);
+            splashDialog.setModal(false);
+
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.setBorder(BorderFactory.createLineBorder(Color.RED, 3));
+
+            JLabel text = new JLabel("Loading...");
+            text.setFont(new Font("Tahoma", Font.BOLD, 15));
+           
+            panel.setBackground(Color.LIGHT_GRAY);
+
+
+            panel.add(text);
+            splashDialog.add(panel);
+            splashDialog.setLocationRelativeTo(FrameMainMenu.this);
+        }
+
+        splashDialog.getParent().setEnabled(false);
+        splashDialog.setVisible(true);
     }
 }

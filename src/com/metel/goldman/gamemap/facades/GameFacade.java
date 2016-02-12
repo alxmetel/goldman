@@ -47,8 +47,6 @@ public class GameFacade {
         if (soundPlayer instanceof MoveResultListener) {
             mapLoader.getGameMap().getGameCollection().addMoveListener((MoveResultListener) soundPlayer);
         }
-
-
     }
 
     public GameFacade() {
@@ -63,6 +61,12 @@ public class GameFacade {
         this.mapLoader = mapLoader;
     }
 
+    public ScoreSaver getScoreSaver() {
+        return scoreSaver;
+    }
+
+    
+    
     public void setScoreSaver(ScoreSaver scoreSaver) {
         this.scoreSaver = scoreSaver;
     }

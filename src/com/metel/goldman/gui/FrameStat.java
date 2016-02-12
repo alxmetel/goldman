@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.gui;
 
+import com.metel.goldman.listeners.interfaces.CloseFrameListener;
 import com.metel.goldman.models.ScoreTableModel;
 import com.metel.goldman.objects.UserScore;
 import java.awt.event.ActionEvent;
@@ -19,11 +20,17 @@ import javax.swing.JFrame;
 public class FrameStat extends BaseChildFrame implements ActionListener {
 
     private ArrayList<UserScore> list;
+    private CloseFrameListener closeFrameListener;
 
     /**
      * Creates new form FrameStat
      */
     public FrameStat() {
+        initComponents();
+    }
+    
+    public FrameStat(CloseFrameListener closeFrameListener) {
+        this.closeFrameListener = closeFrameListener;
         initComponents();
     }
 
@@ -46,7 +53,7 @@ public class FrameStat extends BaseChildFrame implements ActionListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jbtnBack.setText("<< Main Menu");
+        jbtnBack.setText("<< Back");
         jbtnBack.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbtnBackActionPerformed(evt);

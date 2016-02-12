@@ -27,11 +27,17 @@ public class GoldMan extends AbstractSoundObject {
     private transient Clip moveClip;
     private transient Clip treasureClip;
     private transient Clip winClip;
+    private transient Clip treeClip;
 
     public GoldMan(Coordinate coordinate) {
         super.setType(GameObjectType.GOLDMAN);
         super.setCoordinate(coordinate);
-        super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
+        super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_right.png"));
+        
+        movingImages.put(MovingDirection.UP, getImageIcon("/com/metel/goldman/images/goldman_up.png"));
+        movingImages.put(MovingDirection.DOWN, getImageIcon("/com/metel/goldman/images/goldman_down.png"));
+        movingImages.put(MovingDirection.LEFT, getImageIcon("/com/metel/goldman/images/goldman_left.png"));
+        movingImages.put(MovingDirection.RIGHT, getImageIcon("/com/metel/goldman/images/goldman_right.png"));
     }
 
     public void addSTotalcore(int score) {
@@ -52,24 +58,6 @@ public class GoldMan extends AbstractSoundObject {
 
     public void setTurnsNumber(int turnsNumber) {
         this.turnsNumber = turnsNumber;
-    }
-
-    @Override
-    public void changeIcon(MovingDirection direction) {
-        switch (direction) {
-            case DOWN:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_down.png"));
-                break;
-            case LEFT:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_left.png"));
-                break;
-            case RIGHT:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_right.png"));
-                break;
-            case UP:
-                super.setIcon(getImageIcon("/com/metel/goldman/images/goldman_up.png"));
-                break;
-        }
     }
 
     @Override
@@ -115,10 +103,17 @@ public class GoldMan extends AbstractSoundObject {
         if (winClip ==null) {
             winClip = openClip(WavPlayer.SOUND_WIN);
         }
+        
+          if (treeClip ==null) {
+            treeClip = openClip(WavPlayer.SOUND_TREE);
+        }
 
         switch (actionResult) {
             case MOVE: {
                 return moveClip;
+            }                
+            case HIDE_IN_TREE:{
+                return treeClip;
             }
             case COLLECT_TREASURE: {
                 return treasureClip;
@@ -130,7 +125,6 @@ public class GoldMan extends AbstractSoundObject {
                 return winClip;
             }
         }
-
         return null;
     }
 }
