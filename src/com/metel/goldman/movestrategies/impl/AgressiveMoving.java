@@ -39,17 +39,26 @@ public class AgressiveMoving implements MoveStrategy {
 
         return direction;
     }
+    
+    private Random random = new Random();
 
-    private MovingDirection getRandomDirection() {
-        return directions[new Random().nextInt(directions.length)];
+    private MovingDirection getRandomDirection() {        
+        return directions[random.nextInt(directions.length)];
     }
 
     private MovingDirection searchAction(ActionResult actionResult, boolean random) {
+        
+        int c = 0;
+     
         MovingDirection direction = null;
 
         if (random) {
             do {
+                c++;
                 direction = getRandomDirection();
+                if (c>4){
+                    return direction;
+                }
             } while (!checkActionResult(actionResult, direction));// случайно подбирать сторону пока не найдем нужный ActionResult
         }else{
             for (MovingDirection movingDirection : directions) {// искать по всем 4 сторонам
