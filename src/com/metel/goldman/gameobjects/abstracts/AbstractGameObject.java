@@ -9,6 +9,7 @@ import com.metel.goldman.gameobjects.impl.Coordinate;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.gameobjects.interfaces.StaticObject;
 import java.io.Serializable;
+import java.util.EnumMap;
 import java.util.Objects;
 import javax.swing.ImageIcon;
 
@@ -21,9 +22,9 @@ import javax.swing.ImageIcon;
 
 public abstract class AbstractGameObject implements StaticObject, Serializable {
     
+    protected static EnumMap<GameObjectType, ImageIcon> staticImages = new EnumMap<>(GameObjectType.class);// карта иконок для всех направлений
     private GameObjectType type;// все объекты будут иметь тип
     private Coordinate coordinate;// все объекты будут иметь координаты положения
-    
     private ImageIcon icon = getImageIcon("/com/metel/goldman/images/noicon.png");// изображение по-умолчанию
 
     protected AbstractGameObject() {
@@ -87,8 +88,10 @@ public abstract class AbstractGameObject implements StaticObject, Serializable {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
+    protected void saveIcon(String path) {
+        if (staticImages.get(type) == null) {
+            staticImages.put(type, getImageIcon(path));
+        }
+        setIcon(staticImages.get(type));
     }
 }

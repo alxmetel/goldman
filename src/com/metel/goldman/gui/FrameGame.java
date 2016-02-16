@@ -5,11 +5,11 @@
  */
 package com.metel.goldman.gui;
 
-import com.metel.goldman.gameobjects.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.enums.MovingDirection;
 import com.metel.goldman.gamemap.facades.GameFacade;
+import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 import com.metel.goldman.listeners.interfaces.CloseFrameListener;
 import com.metel.goldman.listeners.interfaces.MoveResultListener;
 import com.metel.goldman.utils.MessageManager;
@@ -366,15 +366,15 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
     }
     
     @Override
-    public void notifyActionResult(ActionResult actionResult, AbstractMovingObject movingObject) {
+    public void notifyActionResult(ActionResult actionResult, AbstractGameObject movingObject, AbstractGameObject targetObject) {
 
         if (movingObject.getType().equals(GameObjectType.GOLDMAN)) {
             checkGoldManActions(actionResult);
         }
-        
-        checkCommonActions(actionResult);
 
-        gameFacade.updateMap();
+        checkCommonActions(actionResult);
+        gameFacade.updateObjects(movingObject, targetObject);
+
     }
 
     private void checkGoldManActions(ActionResult actionResult) {
@@ -400,6 +400,10 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
                 jlabelTurnsLeft.setText(String.valueOf(gameFacade.getTurnsLeftCount()));
                 break;
             }
+            
+            case HIDE_IN_TREE:{
+                jlabelTurnsLeft.setText(String.valueOf(gameFacade.getTurnsLeftCount()));
+            }
         }
     }
 
@@ -416,26 +420,7 @@ public class FrameGame extends ConfirmCloseFrame implements ActionListener, Move
     @Override
     protected boolean acceptCloseAction() {
 
-        gameFacade.stopGame();
-
-
-        int result = MessageManager.showYesNoCancelMessage(this, MESSAGE_SAVE);
-        switch (result) {
-            case JOptionPane.YES_OPTION: {
-                gameFacade.saveMap();
-                MessageManager.showInformMessage(this, MESSAGE_SAVED_SUCCESS);
-                break;
-            }
-            case JOptionPane.NO_OPTION: {
-                closeFrame();
-                break;
-            }
-            case JOptionPane.CANCEL_OPTION: {
-                gameFacade.startGame();
-                return false;
-            }
-        }
-        return true;
+        return allowExit();
     }
 
     @Override

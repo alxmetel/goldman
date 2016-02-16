@@ -24,9 +24,6 @@ public abstract class AbstractGameMap implements TimeMap, Serializable {
     protected GameCollection gameCollection;
     protected MapInfo mapInfo = new MapInfo();
 
-    public AbstractGameMap() {
-    }
-
     public AbstractGameMap(GameCollection gameCollection) {
         this.gameCollection = gameCollection;
     }
@@ -43,10 +40,6 @@ public abstract class AbstractGameMap implements TimeMap, Serializable {
     public AbstractGameObject getPriorityObject(AbstractGameObject firstObject, AbstractGameObject secondObject) {
         // приоритет объекта зависит от номера индекса объекта enum
         return (firstObject.getType().getIndexPriority() > secondObject.getType().getIndexPriority()) ? firstObject : secondObject;
-    }
-
-    public boolean isValidMap() {
-        return mapInfo.isGoldManExist() && mapInfo.isExitExist(); // если есть и вход и выход - карта валидна
     }
 
     public GameCollection getGameCollection() {

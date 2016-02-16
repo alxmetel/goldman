@@ -9,6 +9,7 @@ import com.metel.goldman.sound.interfaces.SoundPlayer;
 import com.metel.goldman.sound.interfaces.SoundObject;
 import com.metel.goldman.gameobjects.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
+import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 import com.metel.goldman.gameobjects.abstracts.AbstractSoundObject;
 import com.metel.goldman.listeners.interfaces.MoveResultListener;
 import java.io.IOException;
@@ -45,11 +46,11 @@ public class WavPlayer implements MoveResultListener, SoundPlayer {
             backGroundClip.open(ais);
 
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AbstractSoundObject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavPlayer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(AbstractSoundObject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavPlayer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (LineUnavailableException ex) {
-            Logger.getLogger(AbstractSoundObject.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavPlayer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -67,18 +68,16 @@ public class WavPlayer implements MoveResultListener, SoundPlayer {
     }
 
     @Override
-    public void notifyActionResult(ActionResult actionResult, final AbstractMovingObject abstractMovingObject) {
+    public void notifyActionResult(ActionResult actionResult, final AbstractGameObject abstractMovingObject, final AbstractGameObject targetObject) {
 
         if (!(abstractMovingObject instanceof SoundObject)) {
             return;
         }
-
         SoundObject soundObject = (SoundObject) abstractMovingObject;
 
         Clip clip = soundObject.getSoundClip(actionResult);
 
         playSound(clip, false);
-
     }
 
     @Override

@@ -123,10 +123,10 @@ public class MapCollection extends MapMoveListenersRegistrator implements Serial
         }
 
         for (AbstractGameObject gameObject : this.getGameObjects(gameObjectType)) {
-            if (gameObject instanceof AbstractMovingObject) {// дорогостоящая операция - instanceof
+            if (gameObject instanceof AbstractMovingObject) {
                 AbstractMovingObject movingObject = (AbstractMovingObject) gameObject;
 
-                if (moveStrategy != null) {// если указана стратегия движения - то берем наравления оттуда
+                if (moveStrategy != null) {// если указана стратегия движения - то берем направления оттуда
                     direction = moveStrategy.getDirection(movingObject, goldMan, this);
                 }
 
@@ -142,12 +142,16 @@ public class MapCollection extends MapMoveListenersRegistrator implements Serial
                         break;
                     }
                     case COLLECT_TREASURE: {
-                        swapObjects(movingObject, new Nothing(newCoordinate));
+                        Nothing nothing = new Nothing(newCoordinate);
+                        swapObjects(movingObject, nothing);
                         removeObject(objectInNewCoordinate);
+                        objectInNewCoordinate = nothing;
                         break;
                     }
                     case HIDE_IN_TREE: {
-                        swapObjects(movingObject, new Nothing(newCoordinate));
+                        Nothing nothing = new Nothing(newCoordinate);
+                        swapObjects(movingObject, nothing);
+                        objectInNewCoordinate = nothing;
                         break;
                     }
 
@@ -157,9 +161,9 @@ public class MapCollection extends MapMoveListenersRegistrator implements Serial
                     }
 
                 }
-
-                notifyMoveListeners(actionResult, movingObject);
-
+                if (actionResult != ActionResult.NO_ACTION) {
+                    notifyMoveListeners(actionResult, movingObject, objectInNewCoordinate);
+                }
             }
         }
     }
@@ -183,9 +187,9 @@ public class MapCollection extends MapMoveListenersRegistrator implements Serial
     }
 
     @Override
-    public void notifyMoveListeners(ActionResult actionResult, AbstractMovingObject movingObject) {
+    public void notifyMoveListeners(ActionResult actionResult, AbstractGameObject movingObject, AbstractGameObject targetObject) {
         for (MoveResultListener listener : getMoveListeners()) {
-            listener.notifyActionResult(actionResult, movingObject);
+            listener.notifyActionResult(actionResult, movingObject, targetObject);
         }
     }
 

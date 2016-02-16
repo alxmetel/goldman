@@ -102,4 +102,8 @@ public class MapInfo {
     public void setId(int id) {
         this.id = id;
     }
+    
+    public boolean isValidMap() {
+        return isGoldManExist() && isExitExist(); // если есть и вход и выход - карта валидна
+    }
 }

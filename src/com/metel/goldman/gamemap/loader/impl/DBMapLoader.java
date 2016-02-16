@@ -213,7 +213,7 @@ public class DBMapLoader extends AbstractMapLoader {
                 y++;
             }
 
-            if (!gameMap.isValidMap()) {
+            if (!gameMap.getMapInfo().isValidMap()) {
                 throw new Exception("The map is not valid!");
             }
 

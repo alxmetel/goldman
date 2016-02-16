@@ -5,8 +5,8 @@
  */
 package com.metel.goldman.listeners.interfaces;
 
-import com.metel.goldman.gameobjects.abstracts.AbstractMovingObject;
 import com.metel.goldman.enums.ActionResult;
+import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 
 /**
  *
@@ -14,6 +14,5 @@ import com.metel.goldman.enums.ActionResult;
  */
 public interface MoveResultListener {
     
-     public void notifyActionResult(ActionResult actionResult, AbstractMovingObject abstractMovingObject);
-
+    public void notifyActionResult(ActionResult actionResult, AbstractGameObject sourceObject, AbstractGameObject targetObject);
 }

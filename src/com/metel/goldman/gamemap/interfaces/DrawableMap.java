@@ -5,6 +5,7 @@
  */
 package com.metel.goldman.gamemap.interfaces;
 
+import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 import java.awt.Component;
 
 /**
@@ -16,6 +17,7 @@ public interface DrawableMap extends MainMap{
     
     Component getMapComponent();
     
-    boolean drawMap();    
-
+    boolean updateMap();
+    
+    void updateMapObjects(AbstractGameObject obj1, AbstractGameObject obj2);
 }

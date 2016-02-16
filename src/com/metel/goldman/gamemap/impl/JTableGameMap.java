@@ -10,9 +10,6 @@ import com.metel.goldman.gamemap.abstracts.AbstractGameMap;
 import com.metel.goldman.gameobjects.abstracts.AbstractGameObject;
 import com.metel.goldman.enums.GameObjectType;
 import com.metel.goldman.gamemap.interfaces.TimeMap;
-import com.metel.goldman.gameobjects.impl.Coordinate;
-import com.metel.goldman.gameobjects.impl.Nothing;
-import com.metel.goldman.gameobjects.impl.Wall;
 import com.metel.goldman.movestrategies.impl.AgressiveMoving;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -21,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.Timer;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -41,25 +39,10 @@ public class JTableGameMap extends AbstractGameMap implements TimeMap {
         super(gameCollection);
 
         try {
-            jTableMap.setEnabled(false);
-            jTableMap.setSize(new java.awt.Dimension(300, 300));
-            jTableMap.setRowHeight(26);
-            jTableMap.setRowSelectionAllowed(false);
-            jTableMap.setShowHorizontalLines(false);
-            jTableMap.setShowVerticalLines(false);
-            jTableMap.setTableHeader(null);
-            jTableMap.setUpdateSelectionOnSort(false);
-            jTableMap.setVerifyInputWhenFocusTarget(false);
+            prepareTable();
+            updateObjectsArray();
         } catch (Exception ex) {
             Logger.getLogger(JTableGameMap.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    private void fillEmptyMap(int width, int height) {
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                mapObjects[y][x] = new Nothing(new Coordinate(x, y));
-            }
         }
     }
 
@@ -67,50 +50,28 @@ public class JTableGameMap extends AbstractGameMap implements TimeMap {
 
         mapObjects = new AbstractGameObject[mapInfo.getHeight()][mapInfo.getWidth()];
 
-        fillEmptyMap(mapInfo.getWidth(), mapInfo.getHeight());
-
-        // потом заполнить массив объектами		
         for (AbstractGameObject gameObj : getGameCollection().getAllGameObjects()) {
-            if (!gameObj.getType().equals(GameObjectType.NOTHING)) {// пустоты не добавляем, т.к. они уже добавились когда мы вызвали метод fillEmptyMap()
-                int y = gameObj.getCoordinate().getY();
-                int x = gameObj.getCoordinate().getX();
-                if (!(mapObjects[y][x] instanceof Nothing) & // если в этих координатах уже есть какой то объект, отличный от пустоты и стены
-                        !(mapObjects[y][x] instanceof Wall)) {
-                    AbstractGameObject tmpObj = mapObjects[y][x];
-                    mapObjects[y][x] = getPriorityObject(tmpObj, gameObj);
-                } else {
-                    mapObjects[y][x] = gameObj;// проставить объект на карте согласно его координатам
-                }
+            int y = gameObj.getCoordinate().getY();
+            int x = gameObj.getCoordinate().getX();
+            if (mapObjects[y][x] != null) { // если в этих координатах уже есть какой то объект
+                mapObjects[y][x] = getGameCollection().getObjectByCoordinate(x, y);
+            } else {
+                mapObjects[y][x] = gameObj;
             }
         }
     }
 
     @Override
-    public boolean drawMap() {
+    public boolean updateMap() {
 
-        updateObjectsArray();
-
-        try {
-            // присваиваем пустоту всем заголовкам столбцов, чтобы у таблицы не было заголовоков, а то некрасиво смотрится
-            columnNames = new String[mapInfo.getWidth()];
-
-            for (int i = 0; i < columnNames.length; i++) {
-                columnNames[i] = "";
-            }
-            
-            // игровое поле будет отображаться в super без заголовков столбцов
-            jTableMap.setModel(new DefaultTableModel(mapObjects, columnNames));
-
-            // вместо текста в ячейках таблицы устанавливаем отображение картинки
-            for (int i = 0; i < jTableMap.getColumnCount(); i++) {
-                jTableMap.getColumnModel().getColumn(i).setCellRenderer(new ImageRenderer());
-                TableColumn a = jTableMap.getColumnModel().getColumn(i);
-                a.setPreferredWidth(26);
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(JTableGameMap.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+        if (mapObjects == null || mapObjects.length == 0) {
+            updateObjectsArray();
         }
+
+        if (jTableMap.getModel().getRowCount() == 0) {
+            updateModel();
+        }
+
         return true;
     }
 
@@ -127,6 +88,63 @@ public class JTableGameMap extends AbstractGameMap implements TimeMap {
     @Override
     public void stop() {
         timeMover.stop();
+    }
+    
+    @Override
+    public void updateMapObjects(AbstractGameObject obj1, AbstractGameObject obj2) {
+
+        if (obj1 != null) {
+            int y1 = obj1.getCoordinate().getY();
+            int x1 = obj1.getCoordinate().getX();
+
+            ((AbstractTableModel) jTableMap.getModel()).setValueAt(getGameCollection().getObjectByCoordinate(x1, y1), y1, x1);
+        }
+
+        if (obj2 != null) {
+            int y2 = obj2.getCoordinate().getY();
+            int x2 = obj2.getCoordinate().getX();
+
+            ((AbstractTableModel) jTableMap.getModel()).setValueAt(getGameCollection().getObjectByCoordinate(x2, y2), y2, x2);
+        }
+    }
+    
+    private boolean updateModel() {
+
+        try {
+            // присваиваем пустоту всем заголовкам столбцов, чтобы у таблицы не было заголовоков, а то некрасиво смотрится
+            columnNames = new String[mapInfo.getWidth()];
+
+            for (int i = 0; i < columnNames.length; i++) {
+                columnNames[i] = "";
+            }
+
+            // игровое поле будет отображаться в super без заголовков столбцов
+            jTableMap.setModel(new DefaultTableModel(mapObjects, columnNames));
+
+            // вместо текста в ячейках таблицы устанавливаем отображение картинки
+            for (int i = 0; i < jTableMap.getColumnCount(); i++) {
+                jTableMap.getColumnModel().getColumn(i).setCellRenderer(new ImageRenderer());
+                TableColumn a = jTableMap.getColumnModel().getColumn(i);
+                a.setPreferredWidth(26);
+            }
+
+        } catch (Exception ex) {
+            Logger.getLogger(JTableGameMap.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        return true;
+    }
+    
+    private void prepareTable() {
+        jTableMap.setEnabled(false);
+        jTableMap.setSize(new java.awt.Dimension(300, 300));
+        jTableMap.setRowHeight(26);
+        jTableMap.setRowSelectionAllowed(false);
+        jTableMap.setShowHorizontalLines(false);
+        jTableMap.setShowVerticalLines(false);
+        jTableMap.setTableHeader(null);
+        jTableMap.setUpdateSelectionOnSort(false);
+        jTableMap.setVerifyInputWhenFocusTarget(false);
     }
 
     private class TimeMover implements ActionListener {
